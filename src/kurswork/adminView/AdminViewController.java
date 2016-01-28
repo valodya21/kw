@@ -47,8 +47,7 @@ public class AdminViewController implements Initializable {
    
     @FXML
     TreeView aUsersTreeView;
-    @FXML
-    TreeView aGrupsTreeView;
+
     //topin212
     @FXML
     TreeView aUserLabsTreeView;
@@ -64,21 +63,11 @@ public class AdminViewController implements Initializable {
     TextField aUserPhoneTextField;
     @FXML
     TextField aUserNameTextField;
-    @FXML
-    TextField aGrupNameTextField;
+    
     @FXML
     TextField aUserPasswordTextField;
     
-    @FXML
-    Button aGrupEditSaveButton;
-    @FXML
-    Button aGrupEditCancelButton;
-    @FXML
-    Button aGrupNewGrupButton;
-    @FXML
-    Button aGrupNewGrupSaveButton;
-    @FXML
-    Button aGrupDeletButton;
+    
     @FXML
     Button aUserNewUserButton;
     @FXML
@@ -595,6 +584,29 @@ public class AdminViewController implements Initializable {
         myInit();
     }
      
+    
+     
+    /**
+     *  Grup Tab Action Button, Variables and Methods
+     */
+    
+    ///Grups FXML Varibles
+    @FXML
+    TreeView aGrupsTreeView;
+    @FXML
+    TextField aGrupNameTextField;
+    @FXML
+    Button aGrupEditSaveButton;
+    @FXML
+    Button aGrupEditCancelButton;
+    @FXML
+    Button aGrupNewGrupButton;
+    @FXML
+    Button aGrupNewGrupSaveButton;
+    @FXML
+    Button aGrupDeletButton;
+    
+    
     String tmpGrupName;
     
     @FXML
@@ -604,7 +616,6 @@ public class AdminViewController implements Initializable {
             if(!aGrupNameTextField.getText().equals(""))
             {
                 aGrupEditSaveButton.setText("Edit");
-                aGrupEditCancelButton.setText("_C_");
                 aGrupEditCancelButton.setVisible(false);
                 aGrupNewGrupButton.setVisible(true);
                 
@@ -658,9 +669,14 @@ public class AdminViewController implements Initializable {
         }
     }
     
+    /**
+     * 
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
     @FXML
     private void aGrupNewGrupAction() throws ClassNotFoundException, SQLException{
-        if(grupAdd){ //cencrl button
+        if(grupAdd){
             grupAdd = false;
             aGrupNewGrupSaveButton.setVisible(false);
             aGrupEditSaveButton.setVisible(true);
@@ -673,7 +689,7 @@ public class AdminViewController implements Initializable {
 //                aUsersEditSaveButton.setVisible(true);
 //                aUserDeleteButton.setVisible(true);
 //            }
-        }else{ //edit button
+        }else{
             grupAdd = true;
             aGrupEditSaveButton.setVisible(false);
             aGrupNewGrupSaveButton.setVisible(true);
@@ -685,6 +701,7 @@ public class AdminViewController implements Initializable {
         }
     }
     
+    //Save Action for New Grup
     @FXML
     private void aGrupNewGrupSaveAction() throws ClassNotFoundException,
       SQLException{
@@ -701,7 +718,7 @@ public class AdminViewController implements Initializable {
         }
     }
     
-    
+    //Delete Grup Action
     @FXML
     private void aGrupDeletAction() throws ClassNotFoundException, SQLException{
         if(aGrupNameTextField.getText().equals("admin")) return;
@@ -713,4 +730,8 @@ public class AdminViewController implements Initializable {
         aGrupNameTextField.setEditable(false);
         myInit();
     }
+    
+    /**
+     * End of Grup Tab Action Button, Variables and Methods
+     */
 }
