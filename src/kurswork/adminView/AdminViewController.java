@@ -42,50 +42,10 @@ import kurswork.VODBC.LODBC;
 public class AdminViewController implements Initializable {
     public MainTransferDate date;
 
-    boolean grupEdit;
-    boolean grupAdd;
-   
-    @FXML
-    TreeView aUsersTreeView;
-
-    //topin212
-    @FXML
-    TreeView aUserLabsTreeView;
-    //}
-    @FXML
-    TableView<String[]>  aUserLabsStudentTable;
-  
-    @FXML
-    TextField aUserLoginTextField;
-    @FXML
-    TextField aUserEmailTextField;
-    @FXML
-    TextField aUserPhoneTextField;
-    @FXML
-    TextField aUserNameTextField;
-    
-    @FXML
-    TextField aUserPasswordTextField;
-    
-    
-    @FXML
-    Button aUserNewUserButton;
-    @FXML
-    Button aUserCancelButton;
-    @FXML
-    Button aUsersEditSaveButton;
-    @FXML
-    Button aUserSaveButton;
-    @FXML
-    Button aUserDeleteButton;
-    
-    @FXML
-    ChoiceBox aUserGrupChoiceBox;
-   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }    
+    }  
     
     private TreeItem<String> au_childNode[];
     private TreeItem<String> au_childNodeNude[][];
@@ -105,89 +65,66 @@ public class AdminViewController implements Initializable {
         return item;
     }
     
-    //topin212
-    public void drawTableInfo(TreeItem<String> item) throws ClassNotFoundException, SQLException{
-        aUserLabsStudentTable.getColumns().clear();
-
-        int columnNumber=0;
-        TableColumn tableHeader = new TableColumn("Students");
-        aUserLabsStudentTable.getColumns().add(tableHeader);
-        TableColumn[] labs=null;
-        String[] labNames=null;
-        
-        String item_name = item.getValue();
-        if(item_name.equals("root_root_root"))
-            return;
-        else if(item_name == null)
-            return;
-    
-        String parent_name = item.getParent().getValue();
-            if(parent_name.equals("root_root_root"))
-                return;
-        
-        try{
-            columnNumber = LODBC.aGetLabaNumber(parent_name);
-            labNames = LODBC.aGetLabaNames(parent_name, columnNumber);
-            labs = new TableColumn[columnNumber];
-        }catch(SQLException e){
-            System.out.println(e.getMessage());
-        }
-        
-        //I'm going to do this via two-dimenshional array. So, i need an array 1 row bigger, for columns
-        
-        /*
-        columns  : {lab,lab,lab}
-        makarenko: {"4","5","2"}
-        vaslienko: {"3","6","1"}
-        */
-        
-        int studentsNumber = LODBC.aGetNumberofStudentsInGroup(item_name);
-        int labsNumer = LODBC.aGetLabaNumber(parent_name);
-        String[][] kek;
-        kek = new String[studentsNumber+1][labsNumer];
-        String[] headers = new String[labsNumer];
-        
-        System.out.println(studentsNumber);
-        System.out.println(parent_name);
-        
-        for(int i = 0; i< studentsNumber; i++){
-            kek[i] = LODBC.aGetAllStudentsPoints(parent_name, item_name, labsNumer);
-        }
-        
-        
-        //now we need to fill the table up. We have selected a group, and a course. so, we need to display all the students of current group.
-        //let's try to do some stuff
-        
-        //we need to get the list of all students in a group. Then, put them in the first field.
-        
-        //after that's done, we need to grab a certain student's name and feed it to a procedure, that will return an array? of his marks
-        
-        ObservableList<String[]> data = FXCollections.observableArrayList();
-        data.addAll(Arrays.asList(kek));
-        
-        for (int i = 0; i < kek[0].length; i++) {
-            TableColumn tc  = new TableColumn(labNames[i]);
-            final int colNo = i;
-            tc.setCellValueFactory(new Callback<CellDataFeatures<String[], String>, ObservableValue<String>>() {
-                @Override
-                public ObservableValue<String> call(CellDataFeatures<String[], String> p) {
-                    return new SimpleStringProperty((p.getValue()[colNo]));
-                }
-            });
-            tc.setPrefWidth(90);
-            aUserLabsStudentTable.getColumns().add(tc);
-        }
-        aUserLabsStudentTable.setItems(data);
-    }
-    
     public void myInit() throws ClassNotFoundException,
       SQLException{
-        grupEdit = false;
-        grupAdd = false;
-        date.admin= VODBC.aLoadAdmin(); 
+    date.admin= VODBC.aLoadAdmin(); 
         date.courses = LODBC.aLoadCourses();
         
         //USER TAB - TreeView
+        initUserTabView();
+        
+        //Grup TAB
+        initGrupTabView();
+        
+        //Reating Tab
+        initRAtingTabView();
+    }
+
+    boolean userEdit;
+    
+    boolean newUser;
+    boolean userGrupSelected = true;
+    
+////////////////////////////////////////////////////////////////////////////////    
+    /**
+     * User Tab Actions, Varibles and Methods
+     */
+    
+    @FXML
+    TreeView aUsersTreeView;
+    @FXML
+    TextField aUserLoginTextField;
+    @FXML
+    TextField aUserEmailTextField;
+    @FXML
+    TextField aUserPhoneTextField;
+    @FXML
+    TextField aUserNameTextField;
+    @FXML
+    TextField aUserPasswordTextField;
+    
+    @FXML
+    Button aUserNewUserButton;
+    @FXML
+    Button aUserCancelButton;
+    @FXML
+    Button aUsersEditSaveButton;
+    @FXML
+    Button aUserSaveButton;
+    @FXML
+    Button aUserDeleteButton;
+    
+    @FXML
+    ChoiceBox aUserGrupChoiceBox;
+    
+    String tmpUserLogin;
+    String tmpUserGrup;
+    String newUserGrup;
+    String tmpUserName;
+    String tmpUserEmail;
+    String tmpUserPhone;
+    
+    public void initUserTabView(){
         au_root = new TreeItem<>("root_root_root");
         au_childNode = new TreeItem[date.admin.grups.length];
         au_childNodeNude = new TreeItem[date.admin.grups.length][];
@@ -236,109 +173,21 @@ public class AdminViewController implements Initializable {
                 setUserTabView((TreeItem<String>)aUsersTreeView.getSelectionModel().getSelectedItem());
             }}});
         
-        //Grup TAB -TreeView
-        ag_root = new TreeItem<>("root_root_root");
-        ag_childNode = new TreeItem[date.admin.grups.length];
-        ag_root.setExpanded(true); 
-        for(int i=0; i<date.admin.grups.length; i++){
-            ag_childNode[i] = new TreeItem<>(date.admin.grups[i].getName());
-            ag_root.getChildren().add(ag_childNode[i]);
-        }
-        aGrupsTreeView.setRoot(ag_root);
-        aGrupsTreeView.setShowRoot(false);
+        String obs[] = new String[date.admin.grups.length];
+        for(int i=0; i<date.admin.grups.length;i++)
+            obs[i] = date.admin.grups[i].getName();
 
+        aUserGrupChoiceBox.setItems(FXCollections.observableArrayList(obs));
 
-        aGrupsTreeView.setOnMouseClicked(new EventHandler<MouseEvent>(){
-        @Override
-        public void handle(MouseEvent mouseEvent){            
-            if(mouseEvent.getClickCount() == 1){
-
-                grupEdit = false;
-                grupAdd = false;
-
-                aGrupEditCancelButton.setVisible(false);
-                aGrupNewGrupSaveButton.setVisible(false);
-
-                aGrupEditSaveButton.setText("Edit");
-                aGrupEditSaveButton.setVisible(true);
-
-                aGrupNewGrupButton.setText("New Grup");
-                aGrupNewGrupButton.setVisible(true);
-
-                aGrupDeletButton.setVisible(true);
-
-                aGrupNameTextField.setEditable(false);
-                grupEdit = false;
-                aGrupDeletButton.setVisible(true);
-
-                setGrupTabView((TreeItem<String>)aGrupsTreeView.getSelectionModel().getSelectedItem());
-            }}});
-        
-        //USER TAB - Content
-        
-//        aUserGrupChoiceBox;
-            String obs[] = new String[date.admin.grups.length];
-            for(int i=0; i<date.admin.grups.length;i++)
-                obs[i] = date.admin.grups[i].getName();
-            
-            aUserGrupChoiceBox.setItems(FXCollections.observableArrayList(obs));
-            
-            aUserGrupChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new
-                ChangeListener<Number>(){
-                    public void changed(ObservableValue ov, Number value, Number new_value){
-                        if(new_value.intValue()!= -1) 
-                            newUserGrup = obs[new_value.intValue()];
-                    }
-                });
-            
-//Topin212
-    //USER LAB TAB
-        //fill treeView
-            aul_root = new TreeItem<>("root_root_root");
-            aul_childNode = new TreeItem[date.courses.length];          //courses
-            aul_childNodeNude = new TreeItem[date.courses.length][];    //groups
-            aul_root.setExpanded(true); 
-            
-            //Is this supposed to get all the users?
-            
-            for(int i=0; i<date.courses.length; i++){
-                aul_childNode[i] = makeBranch(date.courses[i].getName(), aul_root);
-                aul_childNodeNude[i] = new TreeItem[date.courses[i].grups.length];
-                for (int j = 0; j < date.courses[i].grups.length; j++) {
-                    aul_childNodeNude[i][j] = makeBranch(date.courses[i].grups[j], aul_childNode[i]);
+        aUserGrupChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new
+            ChangeListener<Number>(){
+                public void changed(ObservableValue ov, Number value, Number new_value){
+                    if(new_value.intValue()!= -1) 
+                        newUserGrup = obs[new_value.intValue()];
                 }
-                
-            newUser = false;
-            }
-            
-            aUserLabsTreeView.setRoot(aul_root);
-            aUserLabsTreeView.setShowRoot(false);
-        
-            aUserLabsTreeView.setOnMouseClicked(new EventHandler<MouseEvent>(){
-            @Override
-            public void handle(MouseEvent mouseEvent){            
-                if(mouseEvent.getClickCount() == 1){
-                    try {
-                        setUserTabView((TreeItem<String>)aUserLabsTreeView.getSelectionModel().getSelectedItem());
-                        drawTableInfo((TreeItem<String>)aUserLabsTreeView.getSelectionModel().getSelectedItem());
-                    } catch (ClassNotFoundException | SQLException ex) {
-                        Logger.getLogger(AdminViewController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }});
-            
-        //end fill treeview
-        //fill table
-                //курс -> groups -> rating
-        //end fill table
-                
-                
-                
-    //END USER LAB TAB
-//end Topin212            
-            
+            });
     }
-
+    
     public void setUserTabView(TreeItem<String> item){
         if(item == null) return;    
 
@@ -375,15 +224,6 @@ public class AdminViewController implements Initializable {
             }
         }
     }
-    
-    boolean userEdit;
-    
-    String tmpUserLogin;
-    String tmpUserGrup;
-    String newUserGrup;
-    String tmpUserName;
-    String tmpUserEmail;
-    String tmpUserPhone;
     
     @FXML
     public void aUsersEditSaveAction() throws ClassNotFoundException, SQLException{
@@ -472,33 +312,6 @@ public class AdminViewController implements Initializable {
         //}else{}
     }
     
-    public void setGrupTabView(TreeItem<String> item){
-        if(item == null) return;    
-
-        String root_string = item.getValue();
-        if(root_string.equals("root_root_root"))
-            return;
-        
-        /*
-            aGrupNameTextField.setEditable(false);
-            
-            aGrupEditSaveButton.setVisible(false);
-            aGrupDeletButton.setVisible(false);
-            userGrupSelected = true;
-            return;
-        }
-//*/
-        for(int i=0; i<date.admin.grups.length; i++){
-            if(item.getValue().equals(date.admin.grups[i].getName())){
-               aGrupNameTextField.setText(date.admin.grups[i].getName());
-            }
-        }
-    }
-    
-    boolean newUser;
-    boolean userGrupSelected = true;
-    boolean aTabGrupSelected = true;
-    
     @FXML
     public void aUserNewUserAction(){
         if(newUser){//cancel button
@@ -583,11 +396,14 @@ public class AdminViewController implements Initializable {
         
         myInit();
     }
-     
     
-     
     /**
-     *  Grup Tab Action Button, Variables and Methods
+     * End of User Tab
+     */
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+    /**
+     *  Grup Tab Actions Button, Variables and Methods
      */
     
     ///Grups FXML Varibles
@@ -606,8 +422,76 @@ public class AdminViewController implements Initializable {
     @FXML
     Button aGrupDeletButton;
     
+    boolean grupEdit;
+    boolean grupAdd;
     
     String tmpGrupName;
+    
+    public void initGrupTabView(){
+        
+        grupEdit = false;
+        grupAdd = false;
+        
+    ag_root = new TreeItem<>("root_root_root");
+        ag_childNode = new TreeItem[date.admin.grups.length];
+        ag_root.setExpanded(true); 
+        for(int i=0; i<date.admin.grups.length; i++){
+            ag_childNode[i] = new TreeItem<>(date.admin.grups[i].getName());
+            ag_root.getChildren().add(ag_childNode[i]);
+        }
+        aGrupsTreeView.setRoot(ag_root);
+        aGrupsTreeView.setShowRoot(false);
+
+
+        aGrupsTreeView.setOnMouseClicked(new EventHandler<MouseEvent>(){
+        @Override
+        public void handle(MouseEvent mouseEvent){            
+            if(mouseEvent.getClickCount() == 1){
+
+                grupEdit = false;
+                grupAdd = false;
+
+                aGrupEditCancelButton.setVisible(false);
+                aGrupNewGrupSaveButton.setVisible(false);
+
+                aGrupEditSaveButton.setText("Edit");
+                aGrupEditSaveButton.setVisible(true);
+
+                aGrupNewGrupButton.setText("New Grup");
+                aGrupNewGrupButton.setVisible(true);
+
+                aGrupDeletButton.setVisible(true);
+
+                aGrupNameTextField.setEditable(false);
+                grupEdit = false;
+                aGrupDeletButton.setVisible(true);
+
+                setGrupTabView((TreeItem<String>)aGrupsTreeView.getSelectionModel().getSelectedItem());
+            }}});
+}
+    
+    public void setGrupTabView(TreeItem<String> item){
+        if(item == null) return;    
+
+        String root_string = item.getValue();
+        if(root_string.equals("root_root_root"))
+            return;
+        
+        /*
+            aGrupNameTextField.setEditable(false);
+            
+            aGrupEditSaveButton.setVisible(false);
+            aGrupDeletButton.setVisible(false);
+            userGrupSelected = true;
+            return;
+        }
+//*/
+        for(int i=0; i<date.admin.grups.length; i++){
+            if(item.getValue().equals(date.admin.grups[i].getName())){
+               aGrupNameTextField.setText(date.admin.grups[i].getName());
+            }
+        }
+    }
     
     @FXML
     private void aGrupEditSaveAction() throws ClassNotFoundException, SQLException{
@@ -669,11 +553,6 @@ public class AdminViewController implements Initializable {
         }
     }
     
-    /**
-     * 
-     * @throws ClassNotFoundException
-     * @throws SQLException 
-     */
     @FXML
     private void aGrupNewGrupAction() throws ClassNotFoundException, SQLException{
         if(grupAdd){
@@ -733,5 +612,137 @@ public class AdminViewController implements Initializable {
     
     /**
      * End of Grup Tab Action Button, Variables and Methods
+     */
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+    /**
+     *  Reating Tab Action Button, Varibles and Methods
+     */
+    @FXML
+    TreeView aRatingTreeView;
+    
+    @FXML
+    TableView<String[]>  aUserRatingTable;
+    
+    public void initRAtingTabView(){
+    //USER LAB TAB
+        //fill treeView
+            aul_root = new TreeItem<>("root_root_root");
+            aul_childNode = new TreeItem[date.courses.length];          //courses
+            aul_childNodeNude = new TreeItem[date.courses.length][];    //groups
+            aul_root.setExpanded(true); 
+            
+            //Is this supposed to get all the users?
+            
+            for(int i=0; i<date.courses.length; i++){
+                aul_childNode[i] = makeBranch(date.courses[i].getName(), aul_root);
+                aul_childNodeNude[i] = new TreeItem[date.courses[i].grups.length];
+                for (int j = 0; j < date.courses[i].grups.length; j++) {
+                    aul_childNodeNude[i][j] = makeBranch(date.courses[i].grups[j], aul_childNode[i]);
+                }
+                
+            newUser = false;
+            }
+            
+            aRatingTreeView.setRoot(aul_root);
+            aRatingTreeView.setShowRoot(false);
+        
+            aRatingTreeView.setOnMouseClicked(new EventHandler<MouseEvent>(){
+            @Override
+            public void handle(MouseEvent mouseEvent){            
+                if(mouseEvent.getClickCount() == 1){
+                    try {
+                        setUserTabView((TreeItem<String>)aRatingTreeView.getSelectionModel().getSelectedItem());
+                        drawTableInfo((TreeItem<String>)aRatingTreeView.getSelectionModel().getSelectedItem());
+                    } catch (ClassNotFoundException | SQLException ex) {
+                        Logger.getLogger(AdminViewController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }});
+            
+        //end fill treeview
+        //fill table
+                //курс -> groups -> rating
+        //end fill table
+               
+    //END USER LAB TAB
+//end 
+    }
+    
+    public void drawTableInfo(TreeItem<String> item) throws ClassNotFoundException, SQLException{
+        aUserRatingTable.getColumns().clear();
+
+        int columnNumber=0;
+        TableColumn tableHeader = new TableColumn("Students");
+        aUserRatingTable.getColumns().add(tableHeader);
+        TableColumn[] labs=null;
+        String[] labNames=null;
+        
+        String item_name = item.getValue();
+        if(item_name == null) return;
+        if(item_name.equals("root_root_root"))
+            return;
+            
+        String parent_name = item.getParent().getValue();
+            if(parent_name.equals("root_root_root"))
+                return;
+        
+        try{
+            columnNumber = LODBC.aGetLabaNumber(parent_name);
+            labNames = LODBC.aGetLabaNames(parent_name, columnNumber);
+            labs = new TableColumn[columnNumber];
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        
+        //I'm going to do this via two-dimenshional array. So, i need an array 1 row bigger, for columns
+        
+        /*
+        columns  : {lab,lab,lab}
+        makarenko: {"4","5","2"}
+        vaslienko: {"3","6","1"}
+        */
+        
+        int studentsNumber = LODBC.aGetNumberofStudentsInGroup(item_name);
+        int labsNumer = LODBC.aGetLabaNumber(parent_name);
+        String[][] kek;
+        kek = new String[studentsNumber+1][labsNumer];
+        String[] headers = new String[labsNumer];
+        
+        System.out.println(studentsNumber);
+        System.out.println(parent_name);
+        
+        for(int i = 0; i< studentsNumber; i++){
+            kek[i] = LODBC.aGetAllStudentsPoints(parent_name, item_name, labsNumer);
+        }
+        
+        
+        //now we need to fill the table up. We have selected a group, and a course. so, we need to display all the students of current group.
+        //let's try to do some stuff
+        
+        //we need to get the list of all students in a group. Then, put them in the first field.
+        
+        //after that's done, we need to grab a certain student's name and feed it to a procedure, that will return an array? of his marks
+        
+        ObservableList<String[]> data = FXCollections.observableArrayList();
+        data.addAll(Arrays.asList(kek));
+        
+        for (int i = 0; i < kek[0].length; i++) {
+            TableColumn tc  = new TableColumn(labNames[i]);
+            final int colNo = i;
+            tc.setCellValueFactory(new Callback<CellDataFeatures<String[], String>, ObservableValue<String>>() {
+                @Override
+                public ObservableValue<String> call(CellDataFeatures<String[], String> p) {
+                    return new SimpleStringProperty((p.getValue()[colNo]));
+                }
+            });
+            tc.setPrefWidth(90);
+            aUserRatingTable.getColumns().add(tc);
+        }
+        aUserRatingTable.setItems(data);
+    }
+    
+    /**
+     *  End of Reating Tab Action Button, Varibles and Methods
      */
 }
