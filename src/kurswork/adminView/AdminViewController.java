@@ -656,9 +656,25 @@ public class AdminViewController implements Initializable {
     @FXML
     TreeView aCoursesTreeView;
     
+    @FXML
+    TextField aCouTextField;
+    
+    @FXML
+    Button aCouEditSaveButton;
+    @FXML
+    Button aCouSaveButton;
+    @FXML
+    Button aCouNewCencelButton;
+    @FXML
+    Button aCouCencelButton;
+    @FXML
+    Button aCouDeleteButton;
+    
     private TreeItem<String> coursesTreeItem_childNode[];
     private TreeItem<String> coursesTreeItem_childNodeNode[][];
     private TreeItem<String> coursesTreeItem_root = new TreeItem<>("root_root_root");
+    
+    String courseTarget;
     
     public void initCoursesTabView() throws ClassNotFoundException, SQLException{
         coursesTreeItem_root = new TreeItem<>("root_root_root");
@@ -701,10 +717,59 @@ public class AdminViewController implements Initializable {
 //                aUserCancelAction();
 //                setUserTabTextFieldTextDef();
 //
-//                setUserTabView((TreeItem<String>)aUsersTreeView.getSelectionModel().getSelectedItem());
+                setCouTabView((TreeItem<String>)aCoursesTreeView.getSelectionModel().getSelectedItem());
             }}});
     }
     
+        public void setCouTabDef(){
+            
+        }
+    
+        public void setCouTabView(TreeItem<String> item){
+        if(item == null) {
+            setCouTabDef();
+            return;
+        }    
+
+        if(item.getValue().equals("root_root_root")){
+            setCouTabDef();
+            return;
+        }
+
+        
+        
+        if(item.getParent().getValue().equals("root_root_root")){
+            courseTarget = item.getValue();
+        }else courseTarget = item.getParent().getValue();
+
+        for(int i=0; i<date.admin.courses.length; i++){
+            if(courseTarget.equals(date.admin.courses[i].getName())){
+                aCouTextField.setText(date.admin.courses[i].getName());
+            }
+        }
+    }
+
+    
+    @FXML 
+    public void aCouEditSaveAction(){
+        
+    }
+    @FXML 
+    public void aCouSaveAction(){
+        
+    }
+    @FXML 
+    public void aCouNewCencelAction(){
+        
+    }
+    @FXML 
+    public void aCouCencelAction(){
+        
+    }
+    @FXML 
+    public void aCouDeleteAction(){
+        
+    }
     /**
      *  End of Courses Tab Action, Variables and Methods
      */
