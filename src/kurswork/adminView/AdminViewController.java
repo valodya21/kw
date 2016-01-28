@@ -710,8 +710,10 @@ public class AdminViewController implements Initializable {
         if(aGrupNameTextField.getText().equals("admin")) return;
         VODBC.deleteGrup(aGrupNameTextField.getText());
         date.admin.delateGrup(aGrupNameTextField.getText());
-        myInit();   
-        
+        aGrupDeletButton.setVisible(false);
+        aGrupEditSaveButton.setVisible(false);
+        aGrupNameTextField.setText("");
+        myInit();
     }
     
 }
