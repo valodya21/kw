@@ -12,6 +12,8 @@ import kurswork.User;
 import kurswork.vlasovlib.MD5;
 
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import kurswork.Admin;
 import kurswork.Grup;
 
@@ -121,7 +123,29 @@ public class LODBC {
         EndSQLConection();
         return result;
     }
-    
+    //topin212
+    //<-vot tut dobavil
+    public static boolean auUserExists(String user){
+        try {
+            StartSQLConection();
+            ResultSet rset;
+        
+            rset = stmt.executeQuery("select login from user_login_tablev where login = '"+user+"'");
+            if(rset.next()){
+                EndSQLConection();
+                return true;
+            }
+            else{
+                EndSQLConection();
+                return false;
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(LODBC.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(LODBC.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return true;
+    }
     
     //Topin212
     //well, you asked for comments :)
@@ -129,6 +153,7 @@ public class LODBC {
       SQLException{
         StartSQLConection();
         ResultSet rset;
+        ResultSet rset2;
         Course[] courses;
         
         
@@ -145,7 +170,7 @@ public class LODBC {
             courses = new Course[5];
         
         rset = stmt
-                .executeQuery("select course_name, count(*) from BATMAN.COURSE group by course_name");
+                .executeQuery("select course_name, grups from (select course_id, count(*) as grups from BATMAN.COURSE_GRUP group by course_id)tmp inner join course on course_id = course.id");
         
         for (int i = 1; rset.next(); i++) {
             courses[i-1] = new Course(rset.getString(1));
@@ -155,19 +180,21 @@ public class LODBC {
         
         
         //now we have Course_name part filled in, we need to fill the group names in
-        rset = stmt
-            .executeQuery("select course_name, grup from COURSE_GRUP inner join users_grups on course_grup.grup_id = users_grups.id inner join course on course_grup.course_id = course.id");
+        //rset = stmt
+        //    .executeQuery("select course_name, grup from COURSE_GRUP inner join users_grups on course_grup.grup_id = users_grups.id inner join course on course_grup.course_id = course.id");
         
         //there's a thing, that between course_iterator change, we do not save information, the iteration passes and we 
         //rset.next();
-        for(int i = 0, course_iterator=0;rset.next() ;i++){
-            if(courses[course_iterator].getName().equals(rset.getString(1))){
-                courses[course_iterator].stringGrups[i] = rset.getString(2);
-            }else{
-                //horrible fix
-                courses[course_iterator+1].stringGrups[0] = rset.getString(2);
-                i=0;
-                course_iterator++;
+        
+        //The idea is kinda better. I am going to use a number of sql requests in order to get the info and not to fuck up on filling my structure
+        
+        
+        for (int i = 0; i<courses.length; i++) {
+            rset2 = stmt
+                    .executeQuery("select GRUP from (select GRUP, COURSE_NAME from COURSE_GRUP inner join course on course_grup.COURSE_ID = course.id inner join users_grups on grup_id = users_grups.id) where COURSE_NAME = '"+courses[i].getName()+"'");
+            for(int j = 0; rset2.next(); j++){
+                //hotFix, suggest add a string constructor
+                courses[i].stringGrups[j] = rset2.getString(1);
             }
         }
         EndSQLConection();

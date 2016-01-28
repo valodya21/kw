@@ -66,13 +66,13 @@
                      <children>
                         <TreeView fx:id="aCoursesTreeView" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" />
                         <Separator layoutX="205.0" layoutY="71.0" prefWidth="200.0" AnchorPane.leftAnchor="205.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
-                        <Button fx:id="aCouEditSaveButton" layoutX="213.0" layoutY="48.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" text="Edit (save)" AnchorPane.leftAnchor="215.0" AnchorPane.topAnchor="45.0" />
-                        <Button layoutX="278.0" layoutY="48.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" text="New (cancel)" AnchorPane.leftAnchor="315.0" AnchorPane.topAnchor="45.0" />
-                        <Button layoutX="342.0" layoutY="48.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" text="Delete" AnchorPane.leftAnchor="415.0" AnchorPane.topAnchor="45.0" />
+                        <Button fx:id="aCouEditSaveButton" layoutX="213.0" layoutY="48.0" mnemonicParsing="false" onAction="#aCouEditSaveAction" prefHeight="25.0" prefWidth="90.0" text="Edit (save)" visible="false" AnchorPane.leftAnchor="215.0" AnchorPane.topAnchor="45.0" />
+                        <Button fx:id="aCouNewCencelButton" layoutX="278.0" layoutY="48.0" mnemonicParsing="false" onAction="#aCouNewCencelAction" prefHeight="25.0" prefWidth="90.0" text="New (cancel)" AnchorPane.leftAnchor="315.0" AnchorPane.topAnchor="45.0" />
+                        <Button fx:id="aCouDeleteButton" layoutX="342.0" layoutY="48.0" mnemonicParsing="false" onAction="#aCouDeleteAction" prefHeight="25.0" prefWidth="90.0" text="Delete" visible="false" AnchorPane.leftAnchor="415.0" AnchorPane.topAnchor="45.0" />
                         <Label layoutX="215.0" layoutY="14.0" text="Course name" AnchorPane.leftAnchor="215.0" AnchorPane.topAnchor="10.0" />
                         <TextField fx:id="aCouTextField" layoutX="294.0" layoutY="6.0" AnchorPane.leftAnchor="300.0" AnchorPane.topAnchor="6.0" />
-                        <Button layoutX="215.0" layoutY="79.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" text="save" AnchorPane.leftAnchor="215.0" AnchorPane.topAnchor="80.0" />
-                        <Button layoutX="315.0" layoutY="80.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" text="Cancel" AnchorPane.leftAnchor="315.0" AnchorPane.topAnchor="80.0" />
+                        <Button fx:id="aCouSaveButton" layoutX="215.0" layoutY="79.0" mnemonicParsing="false" onAction="#aCouSaveAction" prefHeight="25.0" prefWidth="90.0" text="save" visible="false" AnchorPane.leftAnchor="215.0" AnchorPane.topAnchor="45.0" />
+                        <Button fx:id="aCouCencelButton" layoutX="315.0" layoutY="80.0" mnemonicParsing="false" onAction="#aCouCencelAction" prefHeight="25.0" prefWidth="90.0" text="Cancel" visible="false" AnchorPane.leftAnchor="315.0" AnchorPane.topAnchor="45.0" />
                      </children>
                   </AnchorPane>
               </content>

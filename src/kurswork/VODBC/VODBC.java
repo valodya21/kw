@@ -218,6 +218,18 @@ public class VODBC {
         
         EndSQLConection();
     }
+
+    public static void updateCource(Course cou) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public static void addCourse(Course cou) {
+       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public static void deleteCourse(String text) {
+      //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     public VODBC(){
         this.TestUserInit();

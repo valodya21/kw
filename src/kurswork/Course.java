@@ -16,11 +16,13 @@ public class Course {
     public Grup grups[];
     public Laba labs[] = null;
     
+    public String tmp;
+    
     public Course(String name){
         this.name = name;
     }
 
-    Course() {
+    public Course() {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

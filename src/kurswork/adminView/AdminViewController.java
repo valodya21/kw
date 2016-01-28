@@ -29,6 +29,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
+import kurswork.Course;
 import kurswork.MainTransferDate;
 import kurswork.User;
 import kurswork.VODBC.VODBC;
@@ -68,7 +69,7 @@ public class AdminViewController implements Initializable {
     public void myInit() throws ClassNotFoundException,
       SQLException{
     date.admin= VODBC.aLoadAdmin(); 
-//s        date.courses = LODBC.aLoadCourses();
+        date.courses = LODBC.aLoadCourses();
         
         date.admin.courses = VODBC.getCourses();
         //USER TAB - TreeView
@@ -286,35 +287,35 @@ public class AdminViewController implements Initializable {
     @FXML
     public void aUsersEditSaveAction() throws ClassNotFoundException, SQLException{
         if(userModEdit){ //save Button
-            
-            userModEdit = false;
-            aUserCancelButton.setVisible(false);
-            aUserNewUserButton.setVisible(true);
-            aUsersEditSaveButton.setText("Edit");
-            
-            setUserTabTextFieldEditable(false);
-          
-            aUserGrupChoiceBox.setDisable(true);
-            
-            System.out.println(newUserGrup);
-            
+        
+                    userModEdit = false;
+                    aUserCancelButton.setVisible(false);
+                    aUserNewUserButton.setVisible(true);
+                    aUsersEditSaveButton.setText("Edit");
+
+                    setUserTabTextFieldEditable(false);
+
+                    aUserGrupChoiceBox.setDisable(true);
+
+                    System.out.println(newUserGrup);
+
             User newUser = new User();
-            
-            newUser.setLogin(aUserLoginTextField.getText());
-            newUser.setEmail(aUserEmailTextField.getText());
-            newUser.setPhone(aUserPhoneTextField.getText());
-            newUser.setName(aUserNameTextField.getText());
-            
-            if(newUserGrup.equals("admin"))
-                newUser.setPermissionLevel(newUserGrup);
-            else newUser.setPermissionLevel("user");
-            
-            newUser.setGrup(newUserGrup);
-            
-            newUser.tmp = tmpUserLogin;
-            aUserDeleteButton.setVisible(true);
-            VODBC.updateUserInfo(newUser);
-            myInit();
+
+                    newUser.setLogin(aUserLoginTextField.getText());
+                    newUser.setEmail(aUserEmailTextField.getText());
+                    newUser.setPhone(aUserPhoneTextField.getText());
+                    newUser.setName(aUserNameTextField.getText());
+
+                    if(newUserGrup.equals("admin"))
+                        newUser.setPermissionLevel(newUserGrup);
+                    else newUser.setPermissionLevel("user");
+
+                    newUser.setGrup(newUserGrup);
+
+                    newUser.tmp = tmpUserLogin;
+                    aUserDeleteButton.setVisible(true);
+                    VODBC.updateUserInfo(newUser);
+                    myInit();
             
         }else{  //edit Button
             
@@ -721,11 +722,21 @@ public class AdminViewController implements Initializable {
             }}});
     }
     
-        public void setCouTabDef(){
-            
-        }
-    
-        public void setCouTabView(TreeItem<String> item){
+    public void setCouTabDef(){
+        aCouTextField.setEditable(false);
+        aCouTextField.setText("");
+        aCouEditSaveButton.setVisible(false);
+        aCouEditSaveButton.setText("Edit");
+        
+        aCouSaveButton.setVisible(false);
+        aCouNewCencelButton.setVisible(true);
+        aCouNewCencelButton.setText("New");
+        aCouCencelButton.setVisible(false);
+        aCouDeleteButton.setVisible(false);
+            couEditMode = false;
+    }
+
+    public void setCouTabView(TreeItem<String> item){
         if(item == null) {
             setCouTabDef();
             return;
@@ -736,8 +747,6 @@ public class AdminViewController implements Initializable {
             return;
         }
 
-        
-        
         if(item.getParent().getValue().equals("root_root_root")){
             courseTarget = item.getValue();
         }else courseTarget = item.getParent().getValue();
@@ -747,29 +756,210 @@ public class AdminViewController implements Initializable {
                 aCouTextField.setText(date.admin.courses[i].getName());
             }
         }
+        
+        aCouEditSaveButton.setVisible(true);
+        aCouDeleteButton.setVisible(true);
+    }
+
+    boolean couEditMode;
+    boolean couNewMode;
+    
+    String tmpCourse = null;
+    
+    @FXML  //1
+    public void aCouEditSaveAction() throws ClassNotFoundException, SQLException{
+        if(couEditMode){ //Save Button
+            couEditMode = false;
+            aCouEditSaveButton.setText("Edit");
+            aCouCencelButton.setVisible(false);
+            aCouNewCencelButton.setVisible(true);
+            
+            aCouTextField.setEditable(false);
+            
+            Course cou = new Course();
+            
+            cou.setName(aCouTextField.getText());
+            
+            cou.tmp = tmpCourse;
+            
+            aCouDeleteButton.setVisible(true);
+            VODBC.updateCource(cou);
+            myInit();
+        }else{ //edit Button
+            couEditMode = true;
+            aCouEditSaveButton.setText("Save");
+            aCouNewCencelButton.setVisible(false);
+            aCouCencelButton.setVisible(true);
+            aCouTextField.setEditable(true);
+            
+            tmpCourse = aCouTextField.getText();
+            aCouDeleteButton.setVisible(false);
+        }
     }
 
     
     @FXML 
-    public void aCouEditSaveAction(){
+    public void aCouSaveAction() throws ClassNotFoundException, SQLException{
+        couNewMode = false;
+            
+        aCouSaveButton.setVisible(false);
+        aCouEditSaveButton.setVisible(true);
+        aCouDeleteButton.setVisible(true);
+        aCouNewCencelButton.setText("New User");
         
-    }
-    @FXML 
-    public void aCouSaveAction(){
+        aCouTextField.setEditable(false);
         
+        Course cou = new Course();
+            
+        cou.setName(aCouTextField.getText());
+        
+        VODBC.addCourse(cou);
+        myInit();
     }
-    @FXML 
+    @FXML //1
     public void aCouNewCencelAction(){
-        
+        if(couNewMode){//cancel button
+            couNewMode = false;
+    
+            aCouSaveButton.setVisible(false);
+            if(!userGrupSelected){
+                aCouEditSaveButton.setVisible(true);
+                aCouDeleteButton.setVisible(true);
+            }
+            aCouNewCencelButton.setText("New User");
+            
+            aCouTextField.setEditable(false);
+            aCouTextField.setText("");
+            
+        }else{//new user button
+            couNewMode = true;
+            
+            aCouEditSaveButton.setVisible(false);
+            aCouSaveButton.setVisible(true);
+            aCouDeleteButton.setVisible(false);
+            aCouNewCencelButton.setText("Cancel");
+            
+            aCouTextField.setText("");
+            aCouTextField.setEditable(true);
+        }
     }
+    
     @FXML 
     public void aCouCencelAction(){
-        
+        //if(userEdit){
+        couEditMode = false;
+        aCouCencelButton.setVisible(false);
+        aCouNewCencelButton.setVisible(true);
+        aCouEditSaveButton.setText("Edit");
+
+        aCouTextField.setEditable(false);
+
+        aCouTextField.setText(tmpCourse);
+        aCouDeleteButton.setVisible(true);
     }
+    
     @FXML 
-    public void aCouDeleteAction(){
-        
+    public void aCouDeleteAction() throws ClassNotFoundException, SQLException{
+
+        VODBC.deleteCourse(aCouTextField.getText());
+        setCouTabDef();
+        myInit();
     }
+
+//    
+//    @FXML
+//    public void aUserCancelAction(){
+//        //if(userEdit){
+//        userModEdit = false;
+//        aUserCancelButton.setVisible(false);
+//        aUserNewUserButton.setVisible(true);
+//        aUsersEditSaveButton.setText("Edit");
+//
+//        setUserTabTextFieldEditable(false);
+//
+//        aUserGrupChoiceBox.setDisable(true);
+//       // aUserGrupChoiceBox.setText(tmpUserGrup);
+//
+//        aUserLoginTextField.setText(tmpUserLogin);
+//        aUserNameTextField .setText(tmpUserName);
+//        aUserEmailTextField.setText(tmpUserEmail);
+//        aUserPhoneTextField.setText(tmpUserPhone);
+//        aUserDeleteButton.setVisible(true);
+//        System.out.println(newUserGrup);
+//        //}else{}
+//    }
+//    
+//    @FXML
+//    public void aUserNewUserAction(){
+//        if(userModNew){//cancel button
+//            userModNew = false;
+//    
+//            aUserSaveButton.setVisible(false);
+//            if(!userGrupSelected){
+//                aUsersEditSaveButton.setVisible(true);
+//                aUserDeleteButton.setVisible(true);
+//            }
+//            aUserNewUserButton.setText("New User");
+//            
+//            aUserGrupChoiceBox.setDisable(true);
+//            
+//            setUserTabTextFieldDef();
+//            
+//        }else{//new user button
+//            userModNew = true;
+//            
+//            aUsersEditSaveButton.setVisible(false);
+//            aUserSaveButton.setVisible(true);
+//            aUserDeleteButton.setVisible(false);
+//            aUserNewUserButton.setText("Cancel");
+//            
+//            aUserPasswordTextField.setText("user");
+//            
+//            setUserTabTextFieldTextDef();
+//            setUserTabTextFieldEditable(true);
+//            
+//            aUserGrupChoiceBox.setDisable(false);
+//        }
+//    }
+//    
+//    @FXML
+//    public void aUserSaveAction() throws ClassNotFoundException, SQLException{ //save button
+//        userModNew = false;
+//            
+//        aUserSaveButton.setVisible(false);
+//        aUsersEditSaveButton.setVisible(true);
+//        aUserDeleteButton.setVisible(true);
+//        aUserNewUserButton.setText("New User");
+//        
+//        setUserTabTextFieldEditable(false);
+//        
+//        aUserGrupChoiceBox.setDisable(true);
+//        
+//        User newUser = new User();
+//            
+//        newUser.setLogin(aUserLoginTextField.getText());
+//        newUser.setPassword(aUserPasswordTextField.getText());
+//        newUser.setName(aUserNameTextField.getText());
+//        newUser.setEmail(aUserEmailTextField.getText());
+//        newUser.setPhone(aUserPhoneTextField.getText());
+//
+//        if(newUserGrup.equals("admin"))
+//            newUser.setPermissionLevel(newUserGrup);
+//        else newUser.setPermissionLevel("user");
+//        newUser.setGrup(newUserGrup);
+//
+//        VODBC.addUser(newUser);
+//        myInit();
+//    }
+//    
+//    @FXML
+//    private void aUserDeletAction() throws ClassNotFoundException, SQLException{
+//        if(aUserLoginTextField.getText().equals("admin")) return;
+//        VODBC.deleteUser(aUserLoginTextField.getText());
+//        setUserTabButtonDef();
+//        myInit();
+//    }
+//    
     /**
      *  End of Courses Tab Action, Variables and Methods
      */
