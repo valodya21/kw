@@ -106,7 +106,7 @@ public class UserViewController implements Initializable {
         if(EmailEdit){
             EditEmailCancelButton.setVisible(false);
             date.user.tmp = emailField.getText();
-            VODBC.apdateEmail(date.user);
+            VODBC.updateEmail(date.user);
             EditEmailButton.setText("Edit");
             date.user.setEmail(emailField.getText());
             emailField.setEditable(false);
@@ -136,7 +136,7 @@ public class UserViewController implements Initializable {
             EditPhoneButton.setText("Edit");
             
             date.user.tmp = phoneNumField.getText();
-            VODBC.apdatePhoneNumber(date.user);
+            VODBC.updatePhoneNumber(date.user);
             date.user.setPhone(phoneNumField.getText());
             phoneNumField.setEditable(false);
             
@@ -211,6 +211,7 @@ public class UserViewController implements Initializable {
     {
         for(int i=0; i<date.user.course.length; i++)
         {
+            if(item != null) if(item.getParent() != null)
             if(date.user.course[i].getName().equals(item.getParent().getValue()))
             {
                 courseTitleLabel.setText(date.user.course[i].getName());

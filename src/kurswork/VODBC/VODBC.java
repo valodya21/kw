@@ -301,7 +301,7 @@ public class VODBC {
         return answer;
     }
     
-    public static boolean apdatePhoneNumber(User user)throws ClassNotFoundException,
+    public static boolean updatePhoneNumber(User user)throws ClassNotFoundException,
       SQLException{ 
         StartSQLConection();
         ResultSet rset = stmt
@@ -311,7 +311,7 @@ public class VODBC {
         return true;
     }
     
-    public static boolean apdateEmail(User user)throws ClassNotFoundException,
+    public static boolean updateEmail(User user)throws ClassNotFoundException,
       SQLException{
         StartSQLConection();
         System.out.println("Update user_table set email = '"+user.tmp+"' where user_id = (select distinct ID from user_login_table where login = '"+user.getLogin()+"')");
@@ -353,8 +353,12 @@ public class VODBC {
       SQLException{
         StartSQLConection();
         Course crs[] = null;
+        
+        String rq = "select course_name from course where id in (select course_id from course_grup where grup_id = (select id from users_grups where grup ='"+grup+"'))";
+        System.out.println(rq);
         ResultSet rset = stmt
-              .executeQuery("select distinct COURSE.COURSE_NAME from COURSE where GRUP_ID = (select ID from USERS_GRUPS where GRUP = '"+grup+"')");
+              .executeQuery(rq);
+//              .executeQuery("select distinct COURSE.COURSE_NAME from COURSE where GRUP_ID = (select ID from USERS_GRUPS where GRUP = '"+grup+"')");
         
         for(int i=0; rset.next(); i++){
             if(crs == null){
@@ -442,32 +446,43 @@ public class VODBC {
         
         StartSQLConection();
         
+        String rq = "select PERMISION from USER_LOGIN_TABLE where login = '"+date.user.getLogin()+"'";
+        
+        System.out.println(rq);
         ResultSet rset = stmt
-            .executeQuery("select PERMISION from USER_LOGIN_TABLE where login = '"+date.user.getLogin()+"'");
+            .executeQuery(rq);
         if(rset.next())
             date.user.setPermissionLevel(rset.getString(1));
         else date.user.setPermissionLevel("");
         
+        rq = "select GRUP from USERS_GRUPS where id = (select GRUP_ID from USER_TABLE where USER_ID = (select distinct ID from user_login_table where login = '"+date.user.getLogin()+"'))";
+        System.out.println(rq);
         rset = stmt
-            .executeQuery("select GRUP from USERS_GRUPS where id = (select GRUP_ID from USER_TABLE where USER_ID = (select distinct ID from user_login_table where login = '"+date.user.getLogin()+"'))");
+            .executeQuery(rq);
         if(rset.next())
             date.user.setGrup(rset.getString(1));
         else date.user.setGrup("");
         
+        rq = "select NAME from USER_TABLE where USER_ID = (select distinct ID from user_login_table where login = '"+date.user.getLogin()+"')";
+        System.out.println(rq);
         rset = stmt
-            .executeQuery("select NAME from USER_TABLE where USER_ID = (select distinct ID from user_login_table where login = '"+date.user.getLogin()+"')");
+            .executeQuery(rq);
         if(rset.next())
             date.user.setName(rset.getString(1));
         else date.user.setName("");
         
+        rq = "select PHONE from USER_TABLE where USER_ID = (select distinct ID from user_login_table where login = '"+date.user.getLogin()+"')";
+        System.out.println(rq);
         rset = stmt
-            .executeQuery("select PHONE from USER_TABLE where USER_ID = (select distinct ID from user_login_table where login = '"+date.user.getLogin()+"')");
+            .executeQuery(rq);
         if(rset.next())
             date.user.setPhone(rset.getString(1));
         else date.user.setPhone("");
         
+        rq = "select EMAIL from USER_TABLE where USER_ID = (select distinct ID from user_login_table where login = '"+date.user.getLogin()+"')";
+        System.out.println(rq);
         rset = stmt
-            .executeQuery("select EMAIL from USER_TABLE where USER_ID = (select distinct ID from user_login_table where login = '"+date.user.getLogin()+"')");
+            .executeQuery(rq);
         if(rset.next())
             date.user.setEmail(rset.getString(1));
         else date.user.setEmail("");

@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="KursWork.jar" size="40062" download="eager" />
+    <jar href="KursWork.jar" size="40268" download="eager" />
     <jar href="lib/ojdbc7.jar" size="3397734" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="KursWork" >

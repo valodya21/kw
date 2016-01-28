@@ -56,7 +56,7 @@ public class AdminViewController implements Initializable {
     TreeItem<String> aul_root = new TreeItem<>("root_root_root");
     
     private TreeItem<String> ag_childNode[];
-    TreeItem<String> ag_root = new TreeItem<>("root_root_root");
+    private TreeItem<String> ag_root = new TreeItem<>("root_root_root");
     
     public TreeItem<String> makeBranch (String title, TreeItem<String> perent){
         TreeItem<String> item = new TreeItem<>(title);
@@ -68,7 +68,7 @@ public class AdminViewController implements Initializable {
     public void myInit() throws ClassNotFoundException,
       SQLException{
     date.admin= VODBC.aLoadAdmin(); 
-        date.courses = LODBC.aLoadCourses();
+//s        date.courses = LODBC.aLoadCourses();
         
         //USER TAB - TreeView
         initUserTabView();
@@ -77,7 +77,7 @@ public class AdminViewController implements Initializable {
         initGrupTabView();
         
         //Reating Tab
-        initRAtingTabView();
+        //initRatingTabView();
     }
 
     
@@ -127,57 +127,6 @@ public class AdminViewController implements Initializable {
     
     boolean userModNew;
     boolean userModEdit;
-    
-    public void setUserTabDef(){
-        aUserGrupChoiceBox.setDisable(true);
-        aUserGrupChoiceBox.setValue("");
-        
-        setUserTabButtonDef();
-        setUserTabTextFieldDef();
-        
-        userModEdit = false;
-    }
-    
-    public void setUserTabButtonDef(){
-        aUsersEditSaveButton.setVisible(false);
-        aUsersEditSaveButton.setText("Edit");
-        
-        aUserCancelButton.setVisible(false);
-        aUserCancelButton.setText("Cencel");
-        
-        aUserDeleteButton.setVisible(false);
-        aUserDeleteButton.setText("Delete");
-        
-        aUserSaveButton.setVisible(false);
-        aUserSaveButton.setText("Save");
-        
-        aUserNewUserButton.setVisible(true);
-        aUserNewUserButton.setText("New User");
-    }
-    
-    public void setUserTabTextFieldDef(){
-        setUserTabTextFieldEditable(false);
-        aUserPasswordTextField.setEditable(false);
-        
-        setUserTabTextFieldTextDef();
-    }
-    
-    public void setUserTabTextFieldTextDef(){
-        aUserLoginTextField.setText("");
-        aUserPasswordTextField.setText("");
-        aUserNameTextField.setText("");
-        aUserEmailTextField.setText("");
-        aUserPhoneTextField.setText("");
-    }
-    
-    public void setUserTabTextFieldEditable(boolean set){
-        aUserLoginTextField.setEditable(set);
-        aUserNameTextField.setEditable(set);
-        aUserEmailTextField.setEditable(set);
-        aUserPhoneTextField.setEditable(set);
-        
-        //aUserPasswordTextField.setEditable(set);
-    }
     
     public void initUserTabView(){
         au_root = new TreeItem<>("root_root_root");
@@ -274,6 +223,57 @@ public class AdminViewController implements Initializable {
                 }
             }
         }
+    }
+
+    public void setUserTabDef(){
+        aUserGrupChoiceBox.setDisable(true);
+        aUserGrupChoiceBox.setValue("");
+        
+        setUserTabButtonDef();
+        setUserTabTextFieldDef();
+        
+        userModEdit = false;
+    }
+    
+    public void setUserTabButtonDef(){
+        aUsersEditSaveButton.setVisible(false);
+        aUsersEditSaveButton.setText("Edit");
+        
+        aUserCancelButton.setVisible(false);
+        aUserCancelButton.setText("Cencel");
+        
+        aUserDeleteButton.setVisible(false);
+        aUserDeleteButton.setText("Delete");
+        
+        aUserSaveButton.setVisible(false);
+        aUserSaveButton.setText("Save");
+        
+        aUserNewUserButton.setVisible(true);
+        aUserNewUserButton.setText("New User");
+    }
+    
+    public void setUserTabTextFieldDef(){
+        setUserTabTextFieldEditable(false);
+        aUserPasswordTextField.setEditable(false);
+        
+        setUserTabTextFieldTextDef();
+    }
+    
+    public void setUserTabTextFieldTextDef(){
+        aUserLoginTextField.setText("");
+        aUserPasswordTextField.setText("");
+        aUserNameTextField.setText("");
+        aUserEmailTextField.setText("");
+        aUserPhoneTextField.setText("");
+    }
+    
+    public void setUserTabTextFieldEditable(boolean set){
+        aUserLoginTextField.setEditable(set);
+        aUserNameTextField.setEditable(set);
+        aUserEmailTextField.setEditable(set);
+        aUserPhoneTextField.setEditable(set);
+        
+        //aUserPasswordTextField.setEditable(set);
     }
     
     @FXML
@@ -643,6 +643,57 @@ public class AdminViewController implements Initializable {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
     /**
+     *  Courses Tab Action, Variables and Methods
+     */
+    
+    private TreeItem<String> coursesTreeItem_childNode[];
+    private TreeItem<String> coursesTreeItem_root = new TreeItem<>("root_root_root");
+    
+    public void initCoursesTabView(){
+        coursesTreeItem_root = new TreeItem<>("root_root_root");
+        ag_childNode = new TreeItem[date.admin.grups.length];
+        ag_root.setExpanded(true); 
+        for(int i=0; i<date.admin.grups.length; i++){
+            ag_childNode[i] = new TreeItem<>(date.admin.grups[i].getName());
+            ag_root.getChildren().add(ag_childNode[i]);
+        }
+        aGrupsTreeView.setRoot(ag_root);
+        aGrupsTreeView.setShowRoot(false);
+
+
+        aGrupsTreeView.setOnMouseClicked(new EventHandler<MouseEvent>(){
+        @Override
+        public void handle(MouseEvent mouseEvent){            
+            if(mouseEvent.getClickCount() == 1){
+
+                grupEdit = false;
+                grupAdd = false;
+
+                aGrupEditCancelButton.setVisible(false);
+                aGrupNewGrupSaveButton.setVisible(false);
+
+                aGrupEditSaveButton.setText("Edit");
+                aGrupEditSaveButton.setVisible(true);
+
+                aGrupNewGrupButton.setText("New Grup");
+                aGrupNewGrupButton.setVisible(true);
+
+                aGrupDeletButton.setVisible(true);
+
+                aGrupNameTextField.setEditable(false);
+                grupEdit = false;
+                aGrupDeletButton.setVisible(true);
+
+                setGrupTabView((TreeItem<String>)aGrupsTreeView.getSelectionModel().getSelectedItem());
+            }}});
+}
+    
+    /**
+     *  End of Courses Tab Action, Variables and Methods
+     */
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+    /**
      *  Reating Tab Action Button, Varibles and Methods
      */
     @FXML
@@ -651,7 +702,7 @@ public class AdminViewController implements Initializable {
     @FXML
     TableView<String[]>  aUserRatingTable;
     
-    public void initRAtingTabView(){
+    public void initRatingTabView(){
     //USER LAB TAB
         //fill treeView
             aul_root = new TreeItem<>("root_root_root");
