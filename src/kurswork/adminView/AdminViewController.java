@@ -80,9 +80,9 @@ public class AdminViewController implements Initializable {
         initRAtingTabView();
     }
 
-    boolean userEdit;
     
-    boolean newUser;
+    
+    
     boolean userGrupSelected = true;
     
 ////////////////////////////////////////////////////////////////////////////////    
@@ -92,16 +92,17 @@ public class AdminViewController implements Initializable {
     
     @FXML
     TreeView aUsersTreeView;
+    
     @FXML
     TextField aUserLoginTextField;
+    @FXML
+    TextField aUserPasswordTextField;
+    @FXML
+    TextField aUserNameTextField;
     @FXML
     TextField aUserEmailTextField;
     @FXML
     TextField aUserPhoneTextField;
-    @FXML
-    TextField aUserNameTextField;
-    @FXML
-    TextField aUserPasswordTextField;
     
     @FXML
     Button aUserNewUserButton;
@@ -123,6 +124,60 @@ public class AdminViewController implements Initializable {
     String tmpUserName;
     String tmpUserEmail;
     String tmpUserPhone;
+    
+    boolean userModNew;
+    boolean userModEdit;
+    
+    public void setUserTabDef(){
+        aUserGrupChoiceBox.setDisable(true);
+        aUserGrupChoiceBox.setValue("");
+        
+        setUserTabButtonDef();
+        setUserTabTextFieldDef();
+        
+        userModEdit = false;
+    }
+    
+    public void setUserTabButtonDef(){
+        aUsersEditSaveButton.setVisible(false);
+        aUsersEditSaveButton.setText("Edit");
+        
+        aUserCancelButton.setVisible(false);
+        aUserCancelButton.setText("Cencel");
+        
+        aUserDeleteButton.setVisible(false);
+        aUserDeleteButton.setText("Delete");
+        
+        aUserSaveButton.setVisible(false);
+        aUserSaveButton.setText("Save");
+        
+        aUserNewUserButton.setVisible(true);
+        aUserNewUserButton.setText("New User");
+    }
+    
+    public void setUserTabTextFieldDef(){
+        setUserTabTextFieldEditable(false);
+        aUserPasswordTextField.setEditable(false);
+        
+        setUserTabTextFieldTextDef();
+    }
+    
+    public void setUserTabTextFieldTextDef(){
+        aUserLoginTextField.setText("");
+        aUserPasswordTextField.setText("");
+        aUserNameTextField.setText("");
+        aUserEmailTextField.setText("");
+        aUserPhoneTextField.setText("");
+    }
+    
+    public void setUserTabTextFieldEditable(boolean set){
+        aUserLoginTextField.setEditable(set);
+        aUserNameTextField.setEditable(set);
+        aUserEmailTextField.setEditable(set);
+        aUserPhoneTextField.setEditable(set);
+        
+        //aUserPasswordTextField.setEditable(set);
+    }
     
     public void initUserTabView(){
         au_root = new TreeItem<>("root_root_root");
@@ -150,10 +205,8 @@ public class AdminViewController implements Initializable {
         @Override
         public void handle(MouseEvent mouseEvent){            
             if(mouseEvent.getClickCount() == 1){
-                userEdit = false;
-                newUser = false;
-
-
+                userModEdit = false;
+                userModNew = false;
 
                 aUserCancelButton.setVisible(false);
                 aUserSaveButton.setVisible(false);
@@ -165,10 +218,7 @@ public class AdminViewController implements Initializable {
                 aUserDeleteButton.setVisible(true);
 
                 aUserCancelAction();
-                aUserLoginTextField.setText("");
-                aUserNameTextField .setText("");
-                aUserEmailTextField.setText("");
-                aUserPhoneTextField.setText("");
+                setUserTabTextFieldTextDef();
 
                 setUserTabView((TreeItem<String>)aUsersTreeView.getSelectionModel().getSelectedItem());
             }}});
@@ -189,20 +239,21 @@ public class AdminViewController implements Initializable {
     }
     
     public void setUserTabView(TreeItem<String> item){
-        if(item == null) return;    
+        if(item == null) {
+            setUserTabDef();
+            return;
+        }    
 
         String root_string = item.getValue();
         if(root_string.equals("root_root_root")){
-            aUsersEditSaveButton.setVisible(false);
-            aUserDeleteButton.setVisible(false);
+            setUserTabDef();
             userGrupSelected = true;
             return;
         }
 
         root_string = item.getParent().getValue();
         if(root_string.equals("root_root_root")){
-            aUsersEditSaveButton.setVisible(false);
-            aUserDeleteButton.setVisible(false);
+            setUserTabDef();
             userGrupSelected = true;
             return;
         }
@@ -227,17 +278,14 @@ public class AdminViewController implements Initializable {
     
     @FXML
     public void aUsersEditSaveAction() throws ClassNotFoundException, SQLException{
-        if(userEdit){ //save Button
+        if(userModEdit){ //save Button
             
-            userEdit = false;
+            userModEdit = false;
             aUserCancelButton.setVisible(false);
             aUserNewUserButton.setVisible(true);
             aUsersEditSaveButton.setText("Edit");
             
-            aUserLoginTextField.setEditable(false);
-            aUserEmailTextField.setEditable(false);
-            aUserPhoneTextField.setEditable(false);
-            aUserNameTextField.setEditable(false);
+            setUserTabTextFieldEditable(false);
           
             aUserGrupChoiceBox.setDisable(true);
             
@@ -263,15 +311,12 @@ public class AdminViewController implements Initializable {
             
         }else{  //edit Button
             
-            userEdit = true;
+            userModEdit = true;
             aUserNewUserButton.setVisible(false);
             aUserCancelButton.setVisible(true);
             aUsersEditSaveButton.setText("Save");
             
-            aUserLoginTextField.setEditable(true);
-            aUserEmailTextField.setEditable(true);
-            aUserPhoneTextField.setEditable(true);
-            aUserNameTextField.setEditable(true);
+            setUserTabTextFieldEditable(false);
             
             aUserGrupChoiceBox.setDisable(false);
             aUserGrupChoiceBox.setValue(tmpUserGrup);
@@ -282,7 +327,6 @@ public class AdminViewController implements Initializable {
             tmpUserPhone = aUserPhoneTextField.getText();
             
             aUserDeleteButton.setVisible(false);
-            System.out.println(newUserGrup);
             // = aUserGrupChoiceBox.
         }
     }
@@ -290,15 +334,12 @@ public class AdminViewController implements Initializable {
     @FXML
     public void aUserCancelAction(){
         //if(userEdit){
-        userEdit = false;
+        userModEdit = false;
         aUserCancelButton.setVisible(false);
         aUserNewUserButton.setVisible(true);
         aUsersEditSaveButton.setText("Edit");
 
-        aUserLoginTextField.setEditable(false);
-        aUserEmailTextField.setEditable(false);
-        aUserPhoneTextField.setEditable(false);
-        aUserNameTextField.setEditable(false);
+        setUserTabTextFieldEditable(false);
 
         aUserGrupChoiceBox.setDisable(true);
        // aUserGrupChoiceBox.setText(tmpUserGrup);
@@ -314,8 +355,8 @@ public class AdminViewController implements Initializable {
     
     @FXML
     public void aUserNewUserAction(){
-        if(newUser){//cancel button
-            newUser = false;
+        if(userModNew){//cancel button
+            userModNew = false;
     
             aUserSaveButton.setVisible(false);
             if(!userGrupSelected){
@@ -324,21 +365,12 @@ public class AdminViewController implements Initializable {
             }
             aUserNewUserButton.setText("New User");
             
-            aUserLoginTextField.setEditable(false);
-            aUserEmailTextField.setEditable(false);
-            aUserPhoneTextField.setEditable(false);
-            aUserNameTextField.setEditable(false);
-            
             aUserGrupChoiceBox.setDisable(true);
             
-            aUserPasswordTextField.setText("");
-            aUserLoginTextField.setText("");
-            aUserNameTextField .setText("");
-            aUserEmailTextField.setText("");
-            aUserPhoneTextField.setText("");
+            setUserTabTextFieldDef();
             
         }else{//new user button
-            newUser = true;
+            userModNew = true;
             
             aUsersEditSaveButton.setVisible(false);
             aUserSaveButton.setVisible(true);
@@ -347,10 +379,8 @@ public class AdminViewController implements Initializable {
             
             aUserPasswordTextField.setText("user");
             
-            aUserLoginTextField.setEditable(true);
-            aUserEmailTextField.setEditable(true);
-            aUserPhoneTextField.setEditable(true);
-            aUserNameTextField.setEditable(true);
+            setUserTabTextFieldTextDef();
+            setUserTabTextFieldEditable(true);
             
             aUserGrupChoiceBox.setDisable(false);
         }
@@ -358,17 +388,14 @@ public class AdminViewController implements Initializable {
     
     @FXML
     public void aUserSaveAction() throws ClassNotFoundException, SQLException{ //save button
-        newUser = false;
+        userModNew = false;
             
         aUserSaveButton.setVisible(false);
         aUsersEditSaveButton.setVisible(true);
         aUserDeleteButton.setVisible(true);
         aUserNewUserButton.setText("New User");
         
-        aUserLoginTextField.setEditable(false);
-        aUserEmailTextField.setEditable(false);
-        aUserPhoneTextField.setEditable(false);
-        aUserNameTextField.setEditable(false);
+        setUserTabTextFieldEditable(false);
         
         aUserGrupChoiceBox.setDisable(true);
         
@@ -393,7 +420,7 @@ public class AdminViewController implements Initializable {
     private void aUserDeletAction() throws ClassNotFoundException, SQLException{
         if(aUserLoginTextField.getText().equals("admin")) return;
         VODBC.deleteUser(aUserLoginTextField.getText());
-        
+        setUserTabButtonDef();
         myInit();
     }
     
@@ -641,7 +668,6 @@ public class AdminViewController implements Initializable {
                     aul_childNodeNude[i][j] = makeBranch(date.courses[i].grups[j], aul_childNode[i]);
                 }
                 
-            newUser = false;
             }
             
             aRatingTreeView.setRoot(aul_root);
