@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" fx:id="LoginViewFX" prefHeight="312.0" prefWidth="367.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kurswork.loginView.LoginController">
+   <children>
+      <TextField fx:id="txtUsername" layoutX="59.0" layoutY="115.0" promptText="Username" text="admin">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </TextField>
+      <PasswordField fx:id="txtPassword" layoutX="59.0" layoutY="200.0" promptText="Password" text="admin">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </PasswordField>
+      <Button fx:id="loginButton" layoutX="109.0" layoutY="259.0" mnemonicParsing="false" onAction="#loginButtonAction" prefHeight="44.0" prefWidth="149.0" text="Login">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Button>
+      <Label fx:id="msgLabel" alignment="CENTER" layoutX="55.0" layoutY="73.0" prefHeight="30.0" prefWidth="249.0" textAlignment="JUSTIFY" textFill="#f50000">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="48.0" layoutY="24.0" text="Powered by Vlasov V.A. KM-22" textAlignment="JUSTIFY">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>
