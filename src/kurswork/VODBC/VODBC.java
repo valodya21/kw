@@ -439,7 +439,7 @@ public class VODBC {
     
     public MainTransferDate LoadUserDate(MainTransferDate date)throws ClassNotFoundException,
       SQLException{
-        TestUserInit();
+        //TestUserInit();
         
         StartSQLConection();
         
@@ -488,6 +488,57 @@ public class VODBC {
         tmpUserName = date.user.getLogin();
         date.user.course = getCourse(date.user.getGrup());
         
+        EndSQLConection();
         return date;
+    }
+    
+    public static Course[] getCourses()throws ClassNotFoundException,
+      SQLException{
+        StartSQLConection();
+        
+        Course crs[] = null;
+        
+        String rq = "select count(course_name) from course";
+        //rq = "select course_name from course";
+        System.out.println(rq);
+        ResultSet rset = stmt.executeQuery(rq);
+        rset = stmt.executeQuery(rq);
+        
+        if(rset.next()){
+            crs = new Course[rset.getInt(1)];
+        }else return null;
+        
+        rq = "select course_name from course";
+        System.out.println(rq);
+        rset = stmt.executeQuery(rq);
+        
+        for(int i=0; rset.next(); i++){
+            crs[i] = new Course(rset.getString(1));
+            
+            String rq2 = "select * from labs where course_id = (select id from course where course_name = '"+crs[i].getName()+"')";
+            System.out.println(rq2);
+            Statement stmt2 = conn.createStatement();
+            ResultSet rset2 = stmt2.executeQuery(rq2);
+            while(rset2.next()){
+            Laba lab = new Laba();
+                lab.setDeadline(rset2.getString(2));
+                lab.setName(rset2.getString(1));
+                lab.setDescription(rset2.getString(3));
+                crs[i].addLab(lab);
+            }
+            
+            String rq3 = "select GRUP from users_grups where id in (select grup_id from course_grup where course_id = (select id from course where course_name = '"+crs[i].getName()+"'))"; 
+            Statement stmt3 = conn.createStatement();
+            ResultSet rset3 = stmt2.executeQuery(rq3);
+            while(rset3.next()){
+            Grup grup = new Grup();
+                grup.setName(rset3.getString(1));
+                crs[i].addGrup(grup);
+            }
+        }
+        
+        EndSQLConection();
+        
+        return crs;
     }
 }

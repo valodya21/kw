@@ -13,6 +13,7 @@ public class Admin {
     public Grup grups[];
 
     public Course courses[];
+//    public Course Lcourses[];
     
     public void addGrup(String text) {
         if(grups == null){

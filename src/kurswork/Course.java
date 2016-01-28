@@ -24,6 +24,19 @@ public class Course {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
+    public void addGrup(Grup grup) {
+        if(grups == null){
+            grups = new Grup[1];
+            grups[0] = grup;
+        }else{
+            Grup tmpGrups[] = new Grup[grups.length];
+            System.arraycopy(grups, 0, tmpGrups, 0, grups.length);
+            grups = new Grup[tmpGrups.length+1];
+            System.arraycopy(tmpGrups, 0, grups, 0, tmpGrups.length);
+            grups[tmpGrups.length] = grup;
+        }
+    }
+    
     public void addLab(Laba lab){
         if(labs == null){
             labs = new Laba[1];

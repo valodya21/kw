@@ -70,6 +70,7 @@ public class AdminViewController implements Initializable {
     date.admin= VODBC.aLoadAdmin(); 
 //s        date.courses = LODBC.aLoadCourses();
         
+        date.admin.courses = VODBC.getCourses();
         //USER TAB - TreeView
         initUserTabView();
         
@@ -78,6 +79,9 @@ public class AdminViewController implements Initializable {
         
         //Course Tab
         initCoursesTabView();
+        
+        //Labs Tab
+        initLabTabView();
         
         //Reating Tab
         //initRatingTabView();
@@ -657,7 +661,6 @@ public class AdminViewController implements Initializable {
     private TreeItem<String> coursesTreeItem_root = new TreeItem<>("root_root_root");
     
     public void initCoursesTabView() throws ClassNotFoundException, SQLException{
-        date.admin.courses = LODBC.aLoadCourses();
         coursesTreeItem_root = new TreeItem<>("root_root_root");
         coursesTreeItem_childNode = new TreeItem[date.admin.courses.length];
         coursesTreeItem_childNodeNode = new TreeItem[date.admin.courses.length][];
@@ -700,6 +703,67 @@ public class AdminViewController implements Initializable {
 //
 //                setUserTabView((TreeItem<String>)aUsersTreeView.getSelectionModel().getSelectedItem());
             }}});
+    }
+    
+    /**
+     *  End of Courses Tab Action, Variables and Methods
+     */
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+    /**
+     *  Lab Tab Action, Variables and Methods
+     */
+    
+    @FXML
+    TreeView aLabTreeView;
+    
+    private TreeItem<String> LabTreeItem_childNode[];
+    private TreeItem<String> LabTreeItem_childNodeNode[][];
+    private TreeItem<String> LabTreeItem_root = new TreeItem<>("root_root_root");
+    
+    public void initLabTabView() throws ClassNotFoundException, SQLException{
+        LabTreeItem_root = new TreeItem<>("root_root_root");
+        LabTreeItem_childNode = new TreeItem[date.admin.courses.length];
+        LabTreeItem_childNodeNode = new TreeItem[date.admin.courses.length][];
+        LabTreeItem_root.setExpanded(true); 
+        for(int i=0; i<date.admin.courses.length; i++){
+            LabTreeItem_childNode[i] = new TreeItem<>(date.admin.courses[i].getName());
+            if(date.admin.courses[i].labs != null){
+                LabTreeItem_childNodeNode[i] = new TreeItem[date.admin.courses[i].labs.length];
+                for(int j=0; j<date.admin.courses[i].labs.length; j++){
+                    LabTreeItem_childNodeNode[i][j] = new TreeItem<>(date.admin.courses[i].labs[j].getName());
+                    LabTreeItem_childNode[i].getChildren().add(LabTreeItem_childNodeNode[i][j]);
+                }
+            }
+            else{
+                LabTreeItem_childNodeNode[i] = new TreeItem[1];
+            }
+            LabTreeItem_root.getChildren().add(LabTreeItem_childNode[i]);
+        }
+        aLabTreeView.setRoot(LabTreeItem_root);
+        aLabTreeView.setShowRoot(false);
+//
+//        aCoursesTreeView.setOnMouseClicked(new EventHandler<MouseEvent>(){
+//        @Override
+//        public void handle(MouseEvent mouseEvent){            
+//            if(mouseEvent.getClickCount() == 1){
+////                userModEdit = false;
+////                userModNew = false;
+////
+////                aUserCancelButton.setVisible(false);
+////                aUserSaveButton.setVisible(false);
+////
+////                aUsersEditSaveButton.setVisible(true);
+////                aUsersEditSaveButton.setText("Edit");
+////                aUserNewUserButton.setText("New User");
+////                aUserNewUserButton.setVisible(true);
+////                aUserDeleteButton.setVisible(true);
+////
+////                aUserCancelAction();
+////                setUserTabTextFieldTextDef();
+////
+////                setUserTabView((TreeItem<String>)aUsersTreeView.getSelectionModel().getSelectedItem());
+//            }}});
     }
     
     /**
