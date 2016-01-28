@@ -5,7 +5,6 @@
  */
 package kurswork.adminView;
 
-
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -45,8 +44,7 @@ public class AdminViewController implements Initializable {
 
     boolean grupEdit;
     boolean grupAdd;
-    
-    
+   
     @FXML
     TreeView aUsersTreeView;
     @FXML
@@ -57,8 +55,7 @@ public class AdminViewController implements Initializable {
     //}
     @FXML
     TableView<String[]>  aUserLabsStudentTable;
-    
-    
+  
     @FXML
     TextField aUserLoginTextField;
     @FXML
@@ -95,19 +92,12 @@ public class AdminViewController implements Initializable {
     
     @FXML
     ChoiceBox aUserGrupChoiceBox;
-    /**
-     * Initializes the controller class.
-     * @param url
-     * @param rb
-     */
-    
+   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
     }    
     
-    
-        
     private TreeItem<String> au_childNode[];
     private TreeItem<String> au_childNodeNude[][];
     TreeItem<String> au_root = new TreeItem<>("root_root_root");
@@ -208,7 +198,6 @@ public class AdminViewController implements Initializable {
         date.admin= VODBC.aLoadAdmin(); 
         date.courses = LODBC.aLoadCourses();
         
-        
         //USER TAB - TreeView
         au_root = new TreeItem<>("root_root_root");
         au_childNode = new TreeItem[date.admin.grups.length];
@@ -218,45 +207,45 @@ public class AdminViewController implements Initializable {
             au_childNode[i] = new TreeItem<>(date.admin.grups[i].getName());
             if(date.admin.grups[i].users != null){
                 au_childNodeNude[i] = new TreeItem[date.admin.grups[i].users.length];
-            for(int j=0; j<date.admin.grups[i].users.length; j++){
-                au_childNodeNude[i][j] = new TreeItem<>(date.admin.grups[i].users[j].getName());
-                au_childNode[i].getChildren().add(au_childNodeNude[i][j]);
-            }
+                for(int j=0; j<date.admin.grups[i].users.length; j++){
+                    au_childNodeNude[i][j] = new TreeItem<>(date.admin.grups[i].users[j].getName());
+                    au_childNode[i].getChildren().add(au_childNodeNude[i][j]);
+                }
             }
             else{
                 au_childNodeNude[i] = new TreeItem[1];
             }
             au_root.getChildren().add(au_childNode[i]);
         }
-            aUsersTreeView.setRoot(au_root);
-            aUsersTreeView.setShowRoot(false);
-        
-            aUsersTreeView.setOnMouseClicked(new EventHandler<MouseEvent>(){
-            @Override
-            public void handle(MouseEvent mouseEvent){            
-                if(mouseEvent.getClickCount() == 1){
-                    userEdit = false;
-                    newUser = false;
-                    
-                    
-                    
-                    aUserCancelButton.setVisible(false);
-                    aUserSaveButton.setVisible(false);
-                    
-                    aUsersEditSaveButton.setVisible(true);
-                    aUsersEditSaveButton.setText("Edit");
-                    aUserNewUserButton.setText("New User");
-                    aUserNewUserButton.setVisible(true);
-                    aUserDeleteButton.setVisible(true);
-                    
-                    aUserCancelAction();
-                    aUserLoginTextField.setText("");
-                    aUserNameTextField .setText("");
-                    aUserEmailTextField.setText("");
-                    aUserPhoneTextField.setText("");
-                    
-                    setUserTabView((TreeItem<String>)aUsersTreeView.getSelectionModel().getSelectedItem());
-                }}});
+        aUsersTreeView.setRoot(au_root);
+        aUsersTreeView.setShowRoot(false);
+
+        aUsersTreeView.setOnMouseClicked(new EventHandler<MouseEvent>(){
+        @Override
+        public void handle(MouseEvent mouseEvent){            
+            if(mouseEvent.getClickCount() == 1){
+                userEdit = false;
+                newUser = false;
+
+
+
+                aUserCancelButton.setVisible(false);
+                aUserSaveButton.setVisible(false);
+
+                aUsersEditSaveButton.setVisible(true);
+                aUsersEditSaveButton.setText("Edit");
+                aUserNewUserButton.setText("New User");
+                aUserNewUserButton.setVisible(true);
+                aUserDeleteButton.setVisible(true);
+
+                aUserCancelAction();
+                aUserLoginTextField.setText("");
+                aUserNameTextField .setText("");
+                aUserEmailTextField.setText("");
+                aUserPhoneTextField.setText("");
+
+                setUserTabView((TreeItem<String>)aUsersTreeView.getSelectionModel().getSelectedItem());
+            }}});
         
         //Grup TAB -TreeView
         ag_root = new TreeItem<>("root_root_root");
@@ -265,41 +254,38 @@ public class AdminViewController implements Initializable {
         for(int i=0; i<date.admin.grups.length; i++){
             ag_childNode[i] = new TreeItem<>(date.admin.grups[i].getName());
             ag_root.getChildren().add(ag_childNode[i]);
-            }
-            aGrupsTreeView.setRoot(ag_root);
-            aGrupsTreeView.setShowRoot(false);
-        
-            
-            aGrupsTreeView.setOnMouseClicked(new EventHandler<MouseEvent>(){
-            @Override
-            public void handle(MouseEvent mouseEvent){            
-                if(mouseEvent.getClickCount() == 1){
-                    
-                    
-                    grupEdit = false;
-                    grupAdd = false;
-                    
-                    aGrupEditCancelButton.setVisible(false);
-                    aGrupNewGrupSaveButton.setVisible(false);
-                    
-                    aGrupEditSaveButton.setText("Edit");
-                    aGrupEditSaveButton.setVisible(true);
-                  
-                    aGrupNewGrupButton.setText("New Grup");
-                    aGrupNewGrupButton.setVisible(true);
-            
-                    aGrupDeletButton.setVisible(true);
-                    
-                    aGrupNameTextField.setEditable(false);
-                    grupEdit = false;
-                    aGrupDeletButton.setVisible(true);
-                    
-                    setGrupTabView((TreeItem<String>)aGrupsTreeView.getSelectionModel().getSelectedItem());
-                }}});
-        
+        }
+        aGrupsTreeView.setRoot(ag_root);
+        aGrupsTreeView.setShowRoot(false);
+
+
+        aGrupsTreeView.setOnMouseClicked(new EventHandler<MouseEvent>(){
+        @Override
+        public void handle(MouseEvent mouseEvent){            
+            if(mouseEvent.getClickCount() == 1){
+
+                grupEdit = false;
+                grupAdd = false;
+
+                aGrupEditCancelButton.setVisible(false);
+                aGrupNewGrupSaveButton.setVisible(false);
+
+                aGrupEditSaveButton.setText("Edit");
+                aGrupEditSaveButton.setVisible(true);
+
+                aGrupNewGrupButton.setText("New Grup");
+                aGrupNewGrupButton.setVisible(true);
+
+                aGrupDeletButton.setVisible(true);
+
+                aGrupNameTextField.setEditable(false);
+                grupEdit = false;
+                aGrupDeletButton.setVisible(true);
+
+                setGrupTabView((TreeItem<String>)aGrupsTreeView.getSelectionModel().getSelectedItem());
+            }}});
         
         //USER TAB - Content
-        
         
 //        aUserGrupChoiceBox;
             String obs[] = new String[date.admin.grups.length];
@@ -315,8 +301,6 @@ public class AdminViewController implements Initializable {
                             newUserGrup = obs[new_value.intValue()];
                     }
                 });
-            
-            
             
 //Topin212
     //USER LAB TAB
@@ -367,37 +351,37 @@ public class AdminViewController implements Initializable {
     }
 
     public void setUserTabView(TreeItem<String> item){
-    if(item == null) return;    
-        
-    String root_string = item.getValue();
+        if(item == null) return;    
+
+        String root_string = item.getValue();
         if(root_string.equals("root_root_root")){
             aUsersEditSaveButton.setVisible(false);
             aUserDeleteButton.setVisible(false);
             userGrupSelected = true;
             return;
         }
-    
-    root_string = item.getParent().getValue();
+
+        root_string = item.getParent().getValue();
         if(root_string.equals("root_root_root")){
             aUsersEditSaveButton.setVisible(false);
             aUserDeleteButton.setVisible(false);
             userGrupSelected = true;
             return;
         }
-            
-    for(int i=0; i<date.admin.grups.length; i++){
-        if(item.getParent().getValue().equals(date.admin.grups[i].getName())){
-           for(int j=0; j<date.admin.grups[i].users.length; j++){
-               if(item.getValue().equals(date.admin.grups[i].users[j].getName())){
-                   
-                    aUserLoginTextField.setText(date.admin.grups[i].users[j].getLogin());
-                    aUserEmailTextField.setText(date.admin.grups[i].users[j].getEmail());
-                    aUserPhoneTextField.setText(date.admin.grups[i].users[j].getPhone());
-                    aUserNameTextField.setText(date.admin.grups[i].users[j].getName());
-                    
-                    tmpUserGrup = date.admin.grups[i].getName();
-                    aUserGrupChoiceBox.setValue(date.admin.grups[i].getName());
-                }
+
+        for(int i=0; i<date.admin.grups.length; i++){
+            if(item.getParent().getValue().equals(date.admin.grups[i].getName())){
+               for(int j=0; j<date.admin.grups[i].users.length; j++){
+                   if(item.getValue().equals(date.admin.grups[i].users[j].getName())){
+
+                        aUserLoginTextField.setText(date.admin.grups[i].users[j].getLogin());
+                        aUserEmailTextField.setText(date.admin.grups[i].users[j].getEmail());
+                        aUserPhoneTextField.setText(date.admin.grups[i].users[j].getPhone());
+                        aUserNameTextField.setText(date.admin.grups[i].users[j].getName());
+
+                        tmpUserGrup = date.admin.grups[i].getName();
+                        aUserGrupChoiceBox.setValue(date.admin.grups[i].getName());
+                    }
                 }
             }
         }
@@ -500,13 +484,21 @@ public class AdminViewController implements Initializable {
     }
     
     public void setGrupTabView(TreeItem<String> item){
-        if(item == null) 
-            return;    
+        if(item == null) return;    
 
         String root_string = item.getValue();
         if(root_string.equals("root_root_root"))
             return;
-
+        
+        /*
+            aGrupNameTextField.setEditable(false);
+            
+            aGrupEditSaveButton.setVisible(false);
+            aGrupDeletButton.setVisible(false);
+            userGrupSelected = true;
+            return;
+        }
+//*/
         for(int i=0; i<date.admin.grups.length; i++){
             if(item.getValue().equals(date.admin.grups[i].getName())){
                aGrupNameTextField.setText(date.admin.grups[i].getName());
@@ -516,6 +508,7 @@ public class AdminViewController implements Initializable {
     
     boolean newUser;
     boolean userGrupSelected = true;
+    boolean aTabGrupSelected = true;
     
     @FXML
     public void aUserNewUserAction(){
@@ -601,8 +594,7 @@ public class AdminViewController implements Initializable {
         
         myInit();
     }
-    
-        
+     
     String tmpGrupName;
     
     @FXML
@@ -668,7 +660,7 @@ public class AdminViewController implements Initializable {
     
     @FXML
     private void aGrupNewGrupAction() throws ClassNotFoundException, SQLException{
-        if(grupAdd){
+        if(grupAdd){ //cencrl button
             grupAdd = false;
             aGrupNewGrupSaveButton.setVisible(false);
             aGrupEditSaveButton.setVisible(true);
@@ -676,7 +668,12 @@ public class AdminViewController implements Initializable {
             aGrupNameTextField.setEditable(false);
             aGrupNewGrupButton.setText("New Grup");
             aGrupDeletButton.setVisible(true);
-        }else{
+            
+//            if(!aTabGrupSelected){
+//                aUsersEditSaveButton.setVisible(true);
+//                aUserDeleteButton.setVisible(true);
+//            }
+        }else{ //edit button
             grupAdd = true;
             aGrupEditSaveButton.setVisible(false);
             aGrupNewGrupSaveButton.setVisible(true);
@@ -698,11 +695,11 @@ public class AdminViewController implements Initializable {
             aGrupEditSaveButton.setVisible(true);
             VODBC.addGrup(aGrupNameTextField.getText());
             date.admin.addGrup(aGrupNameTextField.getText());
-            myInit();
             aGrupDeletButton.setVisible(true);
+            aGrupNameTextField.setEditable(false);
+            myInit();
         }
     }
-    
     
     
     @FXML
@@ -713,7 +710,7 @@ public class AdminViewController implements Initializable {
         aGrupDeletButton.setVisible(false);
         aGrupEditSaveButton.setVisible(false);
         aGrupNameTextField.setText("");
+        aGrupNameTextField.setEditable(false);
         myInit();
     }
-    
 }
