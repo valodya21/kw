@@ -22,6 +22,13 @@ public class User {
     private String phone;
     private String email;
     
+    //topin212
+    public User(String name){
+        this.Name = name;
+    }
+    //topin212
+    public User(){}
+    
     public String getPermissionLevel(){
         return this.PermissionLevel;
     }

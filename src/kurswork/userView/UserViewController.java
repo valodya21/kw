@@ -177,33 +177,33 @@ public class UserViewController implements Initializable {
         phoneNumField.setText(date.user.getPhone());
         
         if(!(date.user.course == null)){
-            childNode = new TreeItem[date.user.course.length];
-            childNodeNude = new TreeItem[date.user.course.length][];
-
-            root.setExpanded(true); 
-
-            for(int i=0; i<date.user.course.length; i++){
-
-                childNode[i] = new TreeItem<>(date.user.course[i].getName());
-
-                childNodeNude[i] = new TreeItem[date.user.course[i].getLabNumber()];
-                for(int j=0; j<date.user.course[i].getLabNumber(); j++){
-                    childNodeNude[i][j] = new TreeItem<>(date.user.course[i].labs[j].getName());
-                    childNode[i].getChildren().add(childNodeNude[i][j]);
-                }
-                root.getChildren().add(childNode[i]);
-
+        childNode = new TreeItem[date.user.course.length];
+        childNodeNude = new TreeItem[date.user.course.length][];
+        
+        root.setExpanded(true); 
+        
+        for(int i=0; i<date.user.course.length; i++){
+            
+            childNode[i] = new TreeItem<>(date.user.course[i].getName());
+ 
+            childNodeNude[i] = new TreeItem[date.user.course[i].getLabNumber()];
+            for(int j=0; j<date.user.course[i].getLabNumber(); j++){
+                childNodeNude[i][j] = new TreeItem<>(date.user.course[i].labs[j].getName());
+                childNode[i].getChildren().add(childNodeNude[i][j]);
             }
+            root.getChildren().add(childNode[i]);
+        
+        }
 
-            MyNewTree.setRoot(root);
-            MyNewTree.setShowRoot(false);
-
-            MyNewTree.setOnMouseClicked(new EventHandler<MouseEvent>(){
-                @Override
-                public void handle(MouseEvent mouseEvent){            
-                    if(mouseEvent.getClickCount() == 1)
-                        setInfoLab((TreeItem<String>)MyNewTree.getSelectionModel().getSelectedItem());
-                }});
+        MyNewTree.setRoot(root);
+        MyNewTree.setShowRoot(false);
+        
+        MyNewTree.setOnMouseClicked(new EventHandler<MouseEvent>(){
+            @Override
+            public void handle(MouseEvent mouseEvent){            
+                if(mouseEvent.getClickCount() == 1)
+                    setInfoLab((TreeItem<String>)MyNewTree.getSelectionModel().getSelectedItem());
+            }});
         }
     }
     

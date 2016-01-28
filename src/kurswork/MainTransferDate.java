@@ -13,5 +13,6 @@ public class MainTransferDate {
     
     public User user = new User();
     public Admin admin = new Admin();
+    public Course[] courses;
     public int MaxLabs;
 }

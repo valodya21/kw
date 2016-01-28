@@ -53,4 +53,15 @@ public class Course {
         return this.name;
     }
     
+    //topin212
+    public String[] getGrups(){
+        return grups;
+    }
+    
+    //topin212
+    public String getGrupsAt(int at){
+        return grups[at];
+    }
+    
 }
+

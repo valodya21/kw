@@ -89,16 +89,8 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TreeView layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" />
-                        <TableView layoutX="219.0" layoutY="14.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="210.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
-                          <columns>
-                            <TableColumn prefWidth="75.0" resizable="false" text="C1" />
-                            <TableColumn prefWidth="75.0" resizable="false" text="C2" />
-                              <TableColumn prefWidth="75.0" resizable="false" text="Column X" />
-                              <TableColumn prefWidth="75.0" resizable="false" text="Column X" />
-                              <TableColumn prefWidth="75.0" resizable="false" text="Column X" />
-                              <TableColumn prefWidth="75.0" resizable="false" text="Column X" />
-                          </columns>
+                        <TreeView fx:id="aUserLabsTreeView" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" />
+                        <TableView fx:id="aUserLabsStudentTable" layoutX="219.0" layoutY="14.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="210.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
