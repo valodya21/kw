@@ -76,6 +76,9 @@ public class AdminViewController implements Initializable {
         //Grup TAB
         initGrupTabView();
         
+        //Course Tab
+        initCoursesTabView();
+        
         //Reating Tab
         //initRatingTabView();
     }
@@ -646,47 +649,58 @@ public class AdminViewController implements Initializable {
      *  Courses Tab Action, Variables and Methods
      */
     
+    @FXML
+    TreeView aCoursesTreeView;
+    
     private TreeItem<String> coursesTreeItem_childNode[];
+    private TreeItem<String> coursesTreeItem_childNodeNode[][];
     private TreeItem<String> coursesTreeItem_root = new TreeItem<>("root_root_root");
     
-    public void initCoursesTabView(){
+    public void initCoursesTabView() throws ClassNotFoundException, SQLException{
+        date.admin.courses = LODBC.aLoadCourses();
         coursesTreeItem_root = new TreeItem<>("root_root_root");
-        ag_childNode = new TreeItem[date.admin.grups.length];
-        ag_root.setExpanded(true); 
-        for(int i=0; i<date.admin.grups.length; i++){
-            ag_childNode[i] = new TreeItem<>(date.admin.grups[i].getName());
-            ag_root.getChildren().add(ag_childNode[i]);
+        coursesTreeItem_childNode = new TreeItem[date.admin.courses.length];
+        coursesTreeItem_childNodeNode = new TreeItem[date.admin.courses.length][];
+        coursesTreeItem_root.setExpanded(true); 
+        for(int i=0; i<date.admin.courses.length; i++){
+            coursesTreeItem_childNode[i] = new TreeItem<>(date.admin.courses[i].getName());
+            if(date.admin.courses[i].grups != null){
+                coursesTreeItem_childNodeNode[i] = new TreeItem[date.admin.courses[i].grups.length];
+                for(int j=0; j<date.admin.courses[i].grups.length; j++){
+                    coursesTreeItem_childNodeNode[i][j] = new TreeItem<>(date.admin.courses[i].grups[j].getName());
+                    coursesTreeItem_childNode[i].getChildren().add(coursesTreeItem_childNodeNode[i][j]);
+                }
+            }
+            else{
+                coursesTreeItem_childNodeNode[i] = new TreeItem[1];
+            }
+            coursesTreeItem_root.getChildren().add(coursesTreeItem_childNode[i]);
         }
-        aGrupsTreeView.setRoot(ag_root);
-        aGrupsTreeView.setShowRoot(false);
+        aCoursesTreeView.setRoot(coursesTreeItem_root);
+        aCoursesTreeView.setShowRoot(false);
 
-
-        aGrupsTreeView.setOnMouseClicked(new EventHandler<MouseEvent>(){
+        aCoursesTreeView.setOnMouseClicked(new EventHandler<MouseEvent>(){
         @Override
         public void handle(MouseEvent mouseEvent){            
             if(mouseEvent.getClickCount() == 1){
-
-                grupEdit = false;
-                grupAdd = false;
-
-                aGrupEditCancelButton.setVisible(false);
-                aGrupNewGrupSaveButton.setVisible(false);
-
-                aGrupEditSaveButton.setText("Edit");
-                aGrupEditSaveButton.setVisible(true);
-
-                aGrupNewGrupButton.setText("New Grup");
-                aGrupNewGrupButton.setVisible(true);
-
-                aGrupDeletButton.setVisible(true);
-
-                aGrupNameTextField.setEditable(false);
-                grupEdit = false;
-                aGrupDeletButton.setVisible(true);
-
-                setGrupTabView((TreeItem<String>)aGrupsTreeView.getSelectionModel().getSelectedItem());
+//                userModEdit = false;
+//                userModNew = false;
+//
+//                aUserCancelButton.setVisible(false);
+//                aUserSaveButton.setVisible(false);
+//
+//                aUsersEditSaveButton.setVisible(true);
+//                aUsersEditSaveButton.setText("Edit");
+//                aUserNewUserButton.setText("New User");
+//                aUserNewUserButton.setVisible(true);
+//                aUserDeleteButton.setVisible(true);
+//
+//                aUserCancelAction();
+//                setUserTabTextFieldTextDef();
+//
+//                setUserTabView((TreeItem<String>)aUsersTreeView.getSelectionModel().getSelectedItem());
             }}});
-}
+    }
     
     /**
      *  End of Courses Tab Action, Variables and Methods
@@ -714,9 +728,9 @@ public class AdminViewController implements Initializable {
             
             for(int i=0; i<date.courses.length; i++){
                 aul_childNode[i] = makeBranch(date.courses[i].getName(), aul_root);
-                aul_childNodeNude[i] = new TreeItem[date.courses[i].grups.length];
-                for (int j = 0; j < date.courses[i].grups.length; j++) {
-                    aul_childNodeNude[i][j] = makeBranch(date.courses[i].grups[j], aul_childNode[i]);
+                aul_childNodeNude[i] = new TreeItem[date.courses[i].stringGrups.length];
+                for (int j = 0; j < date.courses[i].stringGrups.length; j++) {
+                    aul_childNodeNude[i][j] = makeBranch(date.courses[i].stringGrups[j], aul_childNode[i]);
                 }
                 
             }

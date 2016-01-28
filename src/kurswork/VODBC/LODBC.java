@@ -21,29 +21,7 @@ import oracle.jdbc.pool.*;
  * @author Vlasov
  */
 public class LODBC {
-    public static void testSQLConection() throws ClassNotFoundException,
-      SQLException{
-        OracleDataSource ds = new OracleDataSource();
-        ds.setDriverType("thin");
-        ds.setServerName("localhost");
-        ds.setPortNumber(1522);
-        ds.setDatabaseName("myorcl"); // sid
-        ds.setUser("BATMAN");
-        ds.setPassword("ROBIN");
-        
-        Connection conn = ds.getConnection();
-
-        Statement stmt = conn.createStatement();
-        ResultSet rset = stmt
-            .executeQuery("select PASSWORD from USER_LOGIN_TABLE where login = 'ussser'");
-        if (rset.next())
-          System.out.println(rset.getString(1));
-        rset.close();
-        stmt.close();
-        conn.close();
-    }
-    
-    
+     
     private static OracleDataSource ds;
     private static Statement stmt;
     private static Connection conn;
@@ -171,23 +149,23 @@ public class LODBC {
         
         for (int i = 1; rset.next(); i++) {
             courses[i-1] = new Course(rset.getString(1));
-            courses[i-1].grups = new String[Integer.parseInt(rset.getString(2), 10)];
+            courses[i-1].stringGrups = new String[Integer.parseInt(rset.getString(2), 10)];
         }
         //-----------------------------
         
         
         //now we have Course_name part filled in, we need to fill the group names in
         rset = stmt
-            .executeQuery("select COURSE_NAME, GRUP from BATMAN.USERS_GRUPS inner join BATMAN.COURSE on batman.users_grups.id = batman.course.GRUP_ID");
+            .executeQuery("select course_name, grup from COURSE_GRUP inner join users_grups on course_grup.grup_id = users_grups.id inner join course on course_grup.course_id = course.id");
         
         //there's a thing, that between course_iterator change, we do not save information, the iteration passes and we 
-        rset.next();
+        //rset.next();
         for(int i = 0, course_iterator=0;rset.next() ;i++){
             if(courses[course_iterator].getName().equals(rset.getString(1))){
-                courses[course_iterator].grups[i] = rset.getString(2);
+                courses[course_iterator].stringGrups[i] = rset.getString(2);
             }else{
                 //horrible fix
-                courses[course_iterator+1].grups[0] = rset.getString(2);
+                courses[course_iterator+1].stringGrups[0] = rset.getString(2);
                 i=0;
                 course_iterator++;
             }

@@ -384,61 +384,58 @@ public class VODBC {
       SQLException{
         StartSQLConection();
         Course crs[] = null;
+        String rq = "select distinct COURSE.COURSE_NAME from COURSE";
+        System.out.println();
         ResultSet rset = stmt
-              .executeQuery("select distinct COURSE.COURSE_NAME from COURSE");
+              .executeQuery(rq);
         
-        for(int i=0; rset.next(); i++){
-            if(crs == null)
-            {
-                crs = new Course[1];
-                crs[0] = new Course(rset.getString(1));
-                
-                ResultSet rset2 = stmt
-                .executeQuery("select GRUP from COURSE where COURSE_NAME = '"+crs[0].getName()+"'");
-                for(int j=0; rset2.next(); j++){
-                    if(crs[0].grups == null)
-                    {
-                        crs[0].grups = new String[1];
-                        crs[0].grups[0] = rset2.getString(i);
-                    }
-                    else{
-                        String tmpstr[] = new String[crs[0].grups.length];
-                        System.arraycopy(crs[0].grups, 0, tmpstr, 0, crs[0].grups.length);
-                        crs[0].grups = new String[tmpstr.length+1];
-                        System.arraycopy(tmpstr, 0, crs[0].grups, 0, tmpstr.length);
-                        crs[0].grups[j] = rset.getString(1);
-                    }
+        if(rset.next()){
+            crs = new Course[1];
+            crs[0] = new Course(rset.getString(1));
+            String rq2 = "select GRUP from USERS_GRUPS where ID in(select GRUP_ID from COURSE_GRUP where COURSE_ID = (select ID from COURSE where COURSE_NAME = '"+crs[0].getName()+"'))";
+            System.out.println(rq2);
+            ResultSet rset2 = stmt
+            .executeQuery(rq2);
+            for(int j=0; rset2.next(); j++){
+                if(crs[0].stringGrups == null){
+                    crs[0].stringGrups = new String[1];
+                    crs[0].stringGrups[0] = rset2.getString(1);
+                }
+                else{
+                    String tmpstr[] = new String[crs[0].stringGrups.length];
+                    System.arraycopy(crs[0].stringGrups, 0, tmpstr, 0, crs[0].stringGrups.length);
+                    crs[0].stringGrups = new String[tmpstr.length+1];
+                    System.arraycopy(tmpstr, 0, crs[0].stringGrups, 0, tmpstr.length);
+                    crs[0].stringGrups[j] = rset.getString(1);
                 }
             }
-            else{
+
+            for(int i=0; rset.next(); i++){
                 Course tmpcrs[] = new Course[crs.length];
                 System.arraycopy(crs, 0, tmpcrs, 0, crs.length);
                 crs = new Course[tmpcrs.length+1];
                 System.arraycopy(tmpcrs, 0, crs, 0, tmpcrs.length);
                 crs[i] = new Course(rset.getString(1));
-                
-                ResultSet rset2 = stmt
-                .executeQuery("select GRUP from COURSE where COURSE_NAME = '"+crs[i].getName()+"'");
+
                 for(int j=0; rset2.next(); j++){
-                    if(crs[i].grups == null)
-                    {
-                        crs[i].grups = new String[1];
-                        crs[i].grups[0] = rset2.getString(i);
+                    if(crs[i].stringGrups == null){
+                        crs[i].stringGrups = new String[1];
+                        crs[i].stringGrups[0] = rset2.getString(1);
                     }
                     else{
-                        String tmpstr[] = new String[crs[i].grups.length];
-                        System.arraycopy(crs[i].grups, 0, tmpstr, 0, crs[i].grups.length);
-                        crs[i].grups = new String[tmpstr.length+1];
-                        System.arraycopy(tmpstr, 0, crs[i].grups, 0, tmpstr.length);
-                        crs[i].grups[j] = rset.getString(1);
+                        String tmpstr[] = new String[crs[i].stringGrups.length];
+                        System.arraycopy(crs[i].stringGrups, 0, tmpstr, 0, crs[i].stringGrups.length);
+                        crs[i].stringGrups = new String[tmpstr.length+1];
+                        System.arraycopy(tmpstr, 0, crs[i].stringGrups, 0, tmpstr.length);
+                        crs[i].stringGrups[j] = rset.getString(1);
                     }
                 }
+                crs[i] = getCourseLabs(crs[i]);
             }
-            crs[i] = getCourseLabs(crs[i]);
         }
         EndSQLConection();
         return crs;
-        }
+    }
     
     public MainTransferDate LoadUserDate(MainTransferDate date)throws ClassNotFoundException,
       SQLException{

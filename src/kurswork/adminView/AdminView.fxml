@@ -64,7 +64,7 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TreeView layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" />
+                        <TreeView fx:id="aCoursesTreeView" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" />
                         <Separator layoutX="205.0" layoutY="71.0" prefWidth="200.0" AnchorPane.leftAnchor="205.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
                         <Button layoutX="213.0" layoutY="48.0" mnemonicParsing="false" text="Button" AnchorPane.leftAnchor="215.0" AnchorPane.topAnchor="45.0" />
                         <Button layoutX="278.0" layoutY="48.0" mnemonicParsing="false" text="Button" AnchorPane.topAnchor="45.0" />

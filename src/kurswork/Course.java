@@ -12,11 +12,16 @@ package kurswork;
 public class Course {
     private String name;
     private String grup;
-    public String grups[] = null;
+    public String stringGrups[] = null;
+    public Grup grups[];
     public Laba labs[] = null;
     
     public Course(String name){
         this.name = name;
+    }
+
+    Course() {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void addLab(Laba lab){
@@ -55,12 +60,12 @@ public class Course {
     
     //topin212
     public String[] getGrups(){
-        return grups;
+        return stringGrups;
     }
     
     //topin212
     public String getGrupsAt(int at){
-        return grups[at];
+        return stringGrups[at];
     }
     
 }

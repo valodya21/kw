@@ -55,7 +55,6 @@ public class LoginController implements Initializable {
         date.user.setLogin(txtUsername.getText());
         date.user.setPassword(txtPassword.getText());
         VODBC logc = new VODBC();
-        //logc.TestUserInit();
         if(!date.user.getLogin().equals("") && !date.user.getPassword().equals("")) {
             if(logc.userExistValid(date.user)){
                 date.user.setPermissionLevel(logc.getUserPermision(date.user));
