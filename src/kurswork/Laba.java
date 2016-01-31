@@ -14,6 +14,7 @@ public class Laba {
     private String deadline;
     private String result;
     private String description;
+    private String course;
     
     public Laba(String name, String deadline){
         this.name = name;
@@ -54,5 +55,13 @@ public class Laba {
     
     public void setName(String name){
         this.name = name;
+    }
+
+    public void setCourse(String course) {
+       this.course = course;
+    }
+
+    public String getCourse() {
+        return this.course;
     }
 }

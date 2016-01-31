@@ -74,6 +74,11 @@
                         <TextField fx:id="aCouTextField" layoutX="294.0" layoutY="6.0" AnchorPane.leftAnchor="300.0" AnchorPane.topAnchor="5.0" />
                         <Button fx:id="aCouSaveButton" layoutX="215.0" layoutY="79.0" mnemonicParsing="false" onAction="#aCouSaveAction" prefHeight="25.0" prefWidth="90.0" text="save" visible="false" AnchorPane.leftAnchor="215.0" AnchorPane.topAnchor="45.0" />
                         <Button fx:id="aCouCencelButton" layoutX="315.0" layoutY="80.0" mnemonicParsing="false" onAction="#aCouCencelAction" prefHeight="25.0" prefWidth="90.0" text="Cancel" visible="false" AnchorPane.leftAnchor="315.0" AnchorPane.topAnchor="45.0" />
+                        <Separator layoutX="215.0" layoutY="80.0" prefWidth="200.0" AnchorPane.leftAnchor="205.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0" />
+                        <Button fx:id="aCouAddGroupButton" layoutX="215.0" layoutY="91.0" mnemonicParsing="false" onAction="#aCouAddGroupAction" prefHeight="25.0" prefWidth="90.0" text="add group" AnchorPane.leftAnchor="215.0" AnchorPane.topAnchor="90.0" />
+                        <Button fx:id="aCouDelGroupButton" layoutX="215.0" layoutY="125.0" mnemonicParsing="false" onAction="#aCouDelGroupAction" prefHeight="25.0" prefWidth="90.0" text="delete group" AnchorPane.leftAnchor="215.0" AnchorPane.topAnchor="125.0" />
+                        <ChoiceBox fx:id="aCouAddGroupCB" layoutX="319.0" layoutY="90.0" prefWidth="150.0" AnchorPane.leftAnchor="315.0" AnchorPane.topAnchor="90.0" />
+                        <ChoiceBox fx:id="aCouDelGrupCB" layoutX="315.0" layoutY="125.0" prefWidth="150.0" AnchorPane.leftAnchor="315.0" AnchorPane.topAnchor="125.0" />
                      </children>
                   </AnchorPane>
               </content>
@@ -84,21 +89,21 @@
                      <children>
                         <TreeView fx:id="aLabTreeView" layoutX="14.0" layoutY="45.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" />
                         <Separator layoutX="205.0" layoutY="61.0" prefWidth="200.0" AnchorPane.leftAnchor="205.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
-                        <Label layoutX="211.0" layoutY="14.0" text="Lab name" AnchorPane.leftAnchor="215.0" AnchorPane.topAnchor="10.0" />
-                        <TextField fx:id="aLabNameTextField" layoutX="308.0" layoutY="6.0" AnchorPane.leftAnchor="300.0" AnchorPane.topAnchor="5.0" />
-                        <Label layoutX="215.0" layoutY="46.0" text="Deadline" AnchorPane.leftAnchor="215.0" AnchorPane.topAnchor="45.0" />
-                        <Separator layoutX="205.0" layoutY="71.0" prefWidth="200.0" AnchorPane.leftAnchor="205.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0" />
-                        <DatePicker fx:id="aDeadlineDatePicker" layoutX="300.0" layoutY="41.0" prefHeight="25.0" AnchorPane.leftAnchor="300.0" AnchorPane.topAnchor="40.0" />
-                        <Button fx:id="aLabSaveEditButton" layoutX="213.0" layoutY="435.0" mnemonicParsing="false" onAction="#aLabSaveEditAction" text="Edit (save)" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="215.0" />
-                        <Label layoutX="215.0" layoutY="81.0" text="Description to work" AnchorPane.leftAnchor="215.0" AnchorPane.topAnchor="115.0" />
-                        <TextArea fx:id="aLabDescription" layoutX="219.0" layoutY="108.0" prefHeight="305.0" prefWidth="200.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="215.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="140.0" />
                         <Separator layoutX="205.0" layoutY="102.0" prefWidth="200.0" AnchorPane.leftAnchor="205.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="105.0" />
+                        <Separator layoutX="205.0" layoutY="71.0" prefWidth="200.0" AnchorPane.leftAnchor="205.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0" />
+                        <Label layoutX="215.0" layoutY="46.0" text="Deadline" AnchorPane.leftAnchor="215.0" AnchorPane.topAnchor="45.0" />
+                        <Label layoutX="215.0" layoutY="81.0" text="Description to work" AnchorPane.leftAnchor="215.0" AnchorPane.topAnchor="115.0" />
                         <Label layoutX="215.0" layoutY="81.0" text="Course" AnchorPane.leftAnchor="215.0" AnchorPane.topAnchor="80.0" />
-                        <ChoiceBox fx:id="aLabChoiceBox" layoutX="300.0" layoutY="76.0" prefWidth="150.0" AnchorPane.leftAnchor="300.0" AnchorPane.topAnchor="75.0" />
-                        <Button fx:id="aLabNewButton" layoutX="285.0" layoutY="434.0" mnemonicParsing="false" onAction="#aLabNewAction" text="New Lab" />
-                        <Button fx:id="aLabDeleteButton" layoutX="361.0" layoutY="434.0" mnemonicParsing="false" onAction="#aLabDeleteAction" text="Delete" />
-                        <Button fx:id="aLabSaveButton" layoutX="433.0" layoutY="434.0" mnemonicParsing="false" onAction="#aLabSaveAction" text="Save" />
-                        <Button fx:id="aLabCancelButton" layoutX="496.0" layoutY="434.0" mnemonicParsing="false" onAction="#aLabCancelAction" text="Cancel" />
+                        <Label layoutX="211.0" layoutY="14.0" text="Lab name" AnchorPane.leftAnchor="215.0" AnchorPane.topAnchor="10.0" />
+                        <TextField fx:id="aLabNameTextField" editable="false" layoutX="308.0" layoutY="6.0" AnchorPane.leftAnchor="300.0" AnchorPane.topAnchor="5.0" />
+                        <TextArea fx:id="aLabDescription" editable="false" layoutX="219.0" layoutY="108.0" prefHeight="305.0" prefWidth="200.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="215.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="140.0" />
+                        <DatePicker fx:id="aDeadlineDatePicker" editable="false" layoutX="300.0" layoutY="41.0" prefHeight="25.0" AnchorPane.leftAnchor="300.0" AnchorPane.topAnchor="40.0" />
+                        <ChoiceBox fx:id="aLabCourseChoiceBox" disable="true" layoutX="300.0" layoutY="76.0" prefWidth="150.0" AnchorPane.leftAnchor="300.0" AnchorPane.topAnchor="75.0" />
+                        <Button fx:id="aLabSaveEditButton" layoutX="213.0" layoutY="435.0" mnemonicParsing="false" onAction="#aLabSaveEditAction" prefHeight="25.0" prefWidth="90.0" text="Edit (save)" visible="false" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="215.0" />
+                        <Button fx:id="aLabNewButton" layoutX="285.0" layoutY="434.0" mnemonicParsing="false" onAction="#aLabNewAction" prefHeight="25.0" prefWidth="90.0" text="New Lab" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="315.0" />
+                        <Button fx:id="aLabDeleteButton" layoutX="361.0" layoutY="434.0" mnemonicParsing="false" onAction="#aLabDeleteAction" prefHeight="25.0" prefWidth="90.0" text="Delete" visible="false" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="415.0" />
+                        <Button fx:id="aLabSaveButton" layoutX="433.0" layoutY="434.0" mnemonicParsing="false" onAction="#aLabSaveAction" prefHeight="25.0" prefWidth="90.0" text="Save" visible="false" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="215.0" />
+                        <Button fx:id="aLabCancelButton" layoutX="496.0" layoutY="434.0" mnemonicParsing="false" onAction="#aLabCancelAction" prefHeight="25.0" prefWidth="90.0" text="Cancel" visible="false" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="315.0" />
                      </children>
                   </AnchorPane>
               </content>

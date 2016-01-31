@@ -218,6 +218,146 @@ public class VODBC {
         
         EndSQLConection();
     }
+
+    public static void addLab(Laba lab)  throws ClassNotFoundException,
+      SQLException{
+        StartSQLConection();//throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        String rq = "insert into labs values('"
+                + lab.getName()+"', '"
+                + lab.getDeadline()+"', '"
+                + lab.getDescription()+ "', "
+                + "(select id from course where course_name = '"+lab.getCourse()+"'), "
+                + "(select max(lab_id) from labs)+1)";
+        System.out.println(rq);
+        ResultSet rset = stmt
+                .executeQuery(rq);
+        
+        EndSQLConection();
+    }
+
+    public static void updateLab(Laba lab, Laba labBackup)  throws ClassNotFoundException,
+      SQLException{
+        StartSQLConection();
+//        "Update user_table set phone = '"+user.tmp+"' where login = '"+user.getLogin()+"'"
+        String rq = "Update labs set "
+                + "Lab_name = '"+lab.getName()+"', "
+                + "deadline = '"+lab.getDeadline()+"', "
+                + "description = '"+lab.getDescription()+"', "
+                + "course_id = (select id from course where course_name = '"+lab.getCourse()+"') "
+                + "where lab_name = '"+labBackup.getName()+"' and "
+                + "deadline = '"+labBackup.getDeadline()+"'and "
+                + "course_id = (select id from course where course_name = '"+labBackup.getCourse()+"') ";
+        
+        System.out.println(rq);
+        ResultSet rset = stmt
+                .executeQuery(rq);
+        EndSQLConection();
+    }
+
+    public static void deleteLab(String labName, String labCourse) throws ClassNotFoundException,
+      SQLException{
+        StartSQLConection();
+        ResultSet rset;
+        String rq = "delete from labs where lab_name = '"+labName+"' and "
+                + "course_id = (select id from course where course_name = '"+labCourse+"')";
+        System.out.println(rq);
+        rset = stmt
+            .executeQuery(rq);
+        EndSQLConection();
+    }
+
+    public static String[] getGroupInCourse(String name) throws ClassNotFoundException,
+      SQLException{
+        StartSQLConection();
+        ResultSet rset;
+        String rq = "select count(*) from users_groups where id in"
+                + "(select group_id from course_group where course_id = "
+                + "(select id from course where course_name = '"+name+"'))";
+        System.out.println(rq);
+        rset = stmt
+            .executeQuery(rq);
+        
+        String []answer = null;
+        if(rset.next()){
+            int count = rset.getInt(1);
+            if(count != 0){
+                answer = new String[count];
+
+                rq = "select * from users_groups where id in"
+                    + "(select group_id from course_group where course_id = "
+                    + "(select id from course where course_name = '"+name+"'))";
+                System.out.println(rq);
+                rset = stmt
+                    .executeQuery(rq);
+                for(int i=0; rset.next(); i++)
+                    answer[i] = rset.getString(1);
+            }
+        }
+        
+        EndSQLConection();
+        return answer;
+    }
+
+    public static String[] getGroupNotInCourse(String name) throws ClassNotFoundException,
+      SQLException{
+        StartSQLConection();
+        ResultSet rset;
+        String rq = "select count(*) from users_groups where id not in"
+                + "(select group_id from course_group where course_id = "
+                + "(select id from course where course_name = '"+name+"'))";
+        System.out.println(rq);
+        rset = stmt
+            .executeQuery(rq);
+        
+        String []answer = null;
+        if(rset.next()){
+            int count = rset.getInt(1);
+            if(count != 0){
+                answer = new String[count];
+
+                rq = "select * from users_groups where id not in"
+                    + "(select group_id from course_group where course_id = "
+                    + "(select id from course where course_name = '"+name+"'))";
+                System.out.println(rq);
+                rset = stmt
+                    .executeQuery(rq);
+                for(int i=0; rset.next(); i++)
+                    answer[i] = rset.getString(1);
+            }
+        }
+        
+        EndSQLConection();
+        return answer;
+    }
+
+    public static void addGroupToCourse(String group, String Course) throws ClassNotFoundException,
+      SQLException{
+        StartSQLConection();//throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        String rq = "insert into course_group values("
+                + "(select id from users_groups where group_name = '"+group+"'),"
+                + "(select id from course where course_name = '"+Course+"'))";
+        System.out.println(rq);
+        ResultSet rset = stmt
+                .executeQuery(rq);
+        
+        EndSQLConection();
+    }
+    
+    public static void delGroupFromCourse(String group, String Course) throws ClassNotFoundException,
+      SQLException{
+        StartSQLConection();//throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        String rq = "delete from course_group where "
+                + "group_id = (select id from users_groups where group_name = '"+group+"') and "
+                + "course_id = (select id from course where course_name = '"+Course+"')";
+        System.out.println(rq);
+        ResultSet rset = stmt
+                .executeQuery(rq);
+        
+        EndSQLConection();
+    }
     
     public VODBC(){
         
@@ -354,8 +494,10 @@ public class VODBC {
       SQLException{
         StartSQLConection();
         
+        String rq = "select LAB_NAME,deadline,description from LABS where COURSE_ID = (select distinct ID from COURSE where COURSE_NAME ='"+crs.getName()+"')";
+        System.out.println(rq);
         ResultSet rset = stmt
-              .executeQuery("select LABA_NAME,deadline,description from LABS where COURSE_ID = (select distinct ID from COURSE where COURSE_NAME ='"+crs.getName()+"')");
+              .executeQuery(rq);
         
         for(int i=0; rset.next(); i++){
              crs.addLab(new Laba(rset.getString(1),rset.getString(2)));

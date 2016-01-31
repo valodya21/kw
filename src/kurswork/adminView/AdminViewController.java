@@ -7,8 +7,12 @@ package kurswork.adminView;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 //import java.util.Arrays;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 //import java.util.logging.Level;
 //import java.util.logging.Logger;
 //import javafx.beans.property.SimpleStringProperty;
@@ -32,6 +36,7 @@ import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 //import javafx.util.Callback;
 import kurswork.Course;
+import kurswork.Laba;
 import kurswork.MainTransferDate;
 import kurswork.User;
 import kurswork.VODBC.VODBC;
@@ -546,16 +551,7 @@ public class AdminViewController implements Initializable {
         String root_string = item.getValue();
         if(root_string.equals("root_root_root"))
             return;
-        
-        /*
-            aGrupNameTextField.setEditable(false);
-            
-            aGrupEditSaveButton.setVisible(false);
-            aGrupDeletButton.setVisible(false);
-            userGrupSelected = true;
-            return;
-        }
-//*/
+
         for(int i=0; i<date.admin.grups.length; i++){
             if(item.getValue().equals(date.admin.grups[i].getName())){
                aGrupNameTextField.setText(date.admin.grups[i].getName());
@@ -693,8 +689,17 @@ public class AdminViewController implements Initializable {
     TreeView aCoursesTreeView;
     
     @FXML
+    ChoiceBox aCouAddGroupCB;
+    @FXML
+    ChoiceBox aCouDelGrupCB;
+    
+    @FXML
     TextField aCouTextField;
     
+    @FXML
+    Button aCouAddGroupButton;
+    @FXML
+    Button aCouDelGroupButton;
     @FXML
     Button aCouEditSaveButton;
     @FXML
@@ -739,8 +744,14 @@ public class AdminViewController implements Initializable {
         public void handle(MouseEvent mouseEvent){            
             if(mouseEvent.getClickCount() == 1){
 
-//
-                setCouTabView((TreeItem<String>)aCoursesTreeView.getSelectionModel().getSelectedItem());
+                try {
+                    //
+                    setCouTabView((TreeItem<String>)aCoursesTreeView.getSelectionModel().getSelectedItem());
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(AdminViewController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(AdminViewController.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }}});
     }
     
@@ -758,7 +769,7 @@ public class AdminViewController implements Initializable {
             couEditMode = false;
     }
 
-    public void setCouTabView(TreeItem<String> item){
+    public void setCouTabView(TreeItem<String> item) throws ClassNotFoundException, SQLException{
         if(item == null) {
             setCouTabDef();
             return;
@@ -776,7 +787,29 @@ public class AdminViewController implements Initializable {
         for(int i=0; i<date.admin.courses.length; i++){
             if(courseTarget.equals(date.admin.courses[i].getName())){
                 aCouTextField.setText(date.admin.courses[i].getName());
+                groupInCourse = VODBC.getGroupInCourse(date.admin.courses[i].getName());
+                groupNotInCourse = VODBC.getGroupNotInCourse(date.admin.courses[i].getName());
             }
+        }
+        
+        if(groupNotInCourse!=null){
+            aCouAddGroupCB.setItems(FXCollections.observableArrayList(groupNotInCourse));
+            aCouAddGroupCB.setValue(groupNotInCourse[0]);
+            aCouAddGroupCB.setVisible(true);
+            aCouAddGroupButton.setVisible(true);
+        } else {
+            aCouAddGroupButton.setVisible(false);
+            aCouAddGroupCB.setVisible(false);
+        }
+        
+        if(groupInCourse!=null){
+            aCouDelGrupCB.setItems(FXCollections.observableArrayList(groupInCourse));
+            aCouDelGrupCB.setValue(groupInCourse[0]);
+            aCouDelGrupCB.setVisible(true);
+            aCouDelGroupButton.setVisible(true);
+        } else {
+            aCouDelGrupCB.setVisible(false);
+            aCouDelGroupButton.setVisible(false);
         }
         
         aCouEditSaveButton.setVisible(true);
@@ -786,7 +819,27 @@ public class AdminViewController implements Initializable {
     boolean couEditMode;
     boolean couNewMode;
     
+    String[] groupInCourse = null;
+    String[] groupNotInCourse = null;
+    
+    
     String tmpCourse = null;
+    
+    @FXML
+    public void aCouAddGroupAction() throws ClassNotFoundException, SQLException{
+        VODBC.addGroupToCourse(
+                (String)aCouAddGroupCB.getValue(),
+                aCouTextField.getText());
+        myInit();
+    }
+    
+    @FXML
+    public void aCouDelGroupAction() throws ClassNotFoundException, SQLException{
+        VODBC.delGroupFromCourse(
+                (String)aCouDelGrupCB.getValue(),
+                aCouTextField.getText());
+        myInit();
+    }
     
     @FXML  //1
     public void aCouEditSaveAction() throws ClassNotFoundException, SQLException{
@@ -819,7 +872,6 @@ public class AdminViewController implements Initializable {
         }
     }
 
-    
     @FXML 
     public void aCouSaveAction() throws ClassNotFoundException, SQLException{
         couNewMode = false;
@@ -926,6 +978,9 @@ public class AdminViewController implements Initializable {
     @FXML
     Button aLabCancelButton;
     
+    boolean labEditMod;
+    boolean labNewMod;
+    
     private TreeItem<String> LabTreeItem_childNode[];
     private TreeItem<String> LabTreeItem_childNodeNode[][];
     private TreeItem<String> LabTreeItem_root = new TreeItem<>("root_root_root");
@@ -951,24 +1006,262 @@ public class AdminViewController implements Initializable {
         }
         aLabTreeView.setRoot(LabTreeItem_root);
         aLabTreeView.setShowRoot(false);
+        
+        aLabTreeView.setOnMouseClicked(new EventHandler<MouseEvent>(){
+        @Override
+        public void handle(MouseEvent mouseEvent){            
+            if(mouseEvent.getClickCount() == 1){
+                labEditMod = false;
+                labNewMod = false;
+
+                aLabCancelButton.setVisible(false);
+                aLabSaveButton.setVisible(false);
+
+                aLabSaveEditButton.setVisible(true);
+                aLabSaveEditButton.setText("Edit");
+                aLabNewButton.setText("New");
+                aLabNewButton.setVisible(true);
+                aLabDeleteButton.setVisible(true);
+
+                //aLabCancelAction();
+                setLabTabTextFieldTextDef();
+
+                setLabTabView((TreeItem<String>)aLabTreeView.getSelectionModel().getSelectedItem());
+            }}});
+        
+        String obs[] = new String[date.admin.courses.length];
+        for(int i=0; i<date.admin.courses.length;i++)
+            obs[i] = date.admin.courses[i].getName();
+
+        aLabCourseChoiceBox.setItems(FXCollections.observableArrayList(obs));
+//
+//        //aUserGrupChoiceBox.getSelectionModel().selectedIndexProperty().removeListener(ChangeListener<Number>());
+//        
+//        aUserGrupChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new
+//            ChangeListener<Number>(){
+//                public void changed(ObservableValue ov, Number value, Number new_value){
+//                    if(new_value.intValue()!= -1) 
+//                        newUserGrup = obs[new_value.intValue()];
+//                }
+//            });
     }
     
+    boolean userLabSelected;
+    
+    public void setLabTabView(TreeItem<String> item){
+        if(item == null) {
+            userLabSelected = false;
+            setLabTabDef();
+            return;
+        }    
+
+        String root_string = item.getValue();
+        if(root_string.equals("root_root_root")){
+            setLabTabDef();
+            userLabSelected = true;
+            return;
+        }
+
+        root_string = item.getParent().getValue();
+        if(root_string.equals("root_root_root")){
+            setLabTabDef();
+            userLabSelected = true;
+            return;
+        }
+
+        for(int i=0; i<date.admin.courses.length; i++){
+            if(item.getParent().getValue().equals(date.admin.courses[i].getName())){
+               for(int j=0; j<date.admin.courses[i].labs.length; j++){
+                   if(item.getValue().equals(date.admin.courses[i].labs[j].getName())){
+
+                        aLabNameTextField.setText(date.admin.courses[i].labs[j].getName());
+                        aDeadlineDatePicker.setValue(
+                             LocalDate.parse(
+                                     date.admin.courses[i].labs[j].getDeadline(), 
+                                     DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+                        aLabDescription.setText(date.admin.courses[i].labs[j].getDescription());
+                        aLabCourseChoiceBox.setValue(date.admin.courses[i].getName());
+                        //tmpUserGrup = date.admin.grups[i].getName();
+//                        aLabCourseChoiceBox.setValue(date.admin.courses[i].getName());
+                    }
+                }
+            }
+        }
+    }
+    
+    public void setLabTabDef(){
+        aLabSaveEditButton.setVisible(false);
+        aLabNewButton.setVisible(true);
+        aLabDeleteButton.setVisible(false);
+        aLabSaveButton.setVisible(false);
+        aLabCancelButton.setVisible(false);
+    }
    
+    public void setLabTabTextFieldTextDef(){
+        aLabNameTextField.setText("");
+        aLabDescription.setText("");
+        
+        aDeadlineDatePicker.setValue(LocalDate.parse("01.01.2016", DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        aLabNameTextField.setEditable(false);
+        aLabDescription.setEditable(false);
+        aDeadlineDatePicker.setEditable(false);
+            
+        aLabCourseChoiceBox.setDisable(true);
+    }
+    
+    private Laba labBackup;
     
     @FXML
-    public void aLabNewAction(){}
+    public void aLabSaveEditAction() throws ClassNotFoundException, SQLException{
+        if(labEditMod){//Save Button
+            labEditMod = false;
+            
+            aLabNameTextField.setEditable(false);
+            aDeadlineDatePicker.setEditable(false);
+            aLabCourseChoiceBox.setDisable(true);
+            aLabDescription.setEditable(false);
+            
+            aLabDeleteButton.setVisible(true);
+            aLabSaveButton.setVisible(true);
+            aLabNewButton.setVisible(true);
+            aLabCancelButton.setVisible(false);
+            aLabSaveEditButton.setText("Edit");
+            
+            
+            String deadline = aDeadlineDatePicker.getValue()
+                    .format(DateTimeFormatter.ofPattern(("dd.MM.yyyy")));
+            Laba lab = new Laba();
+            lab.setName(aLabNameTextField.getText());
+            lab.setDescription(aLabDescription.getText());
+            lab.setDeadline(deadline);
+            lab.setCourse(aLabCourseChoiceBox.getValue().toString());
+            
+            VODBC.updateLab(lab, labBackup);
+            myInit();
+        }else{ //EditButton
+            labEditMod = true;
+            aLabNameTextField.setEditable(true);
+            aDeadlineDatePicker.setEditable(true);
+            aLabCourseChoiceBox.setDisable(false);
+            aLabDescription.setEditable(true);
+            
+            aLabDeleteButton.setVisible(false);
+            aLabSaveButton.setVisible(false);
+            aLabNewButton.setVisible(false);
+            aLabCancelButton.setVisible(true);
+            aLabSaveEditButton.setText("Save");
+            
+            String deadline = aDeadlineDatePicker.getValue()
+                    .format(DateTimeFormatter.ofPattern(("dd.MM.yyyy")));
+            labBackup = new Laba();
+            labBackup.setName(aLabNameTextField.getText());
+            labBackup.setDescription(aLabDescription.getText());
+            labBackup.setDeadline(deadline);
+            labBackup.setCourse(aLabCourseChoiceBox.getValue().toString());
+            
+        }
+    }
     
     @FXML
-    public void aLabSaveEditAction(){}
+    public void aLabNewAction(){
+        
+        aLabNameTextField.setText("");
+        aLabDescription.setText("");
+        
+        aLabSaveEditButton.setVisible(false);
+        aLabDeleteButton.setVisible(false);
+        aDeadlineDatePicker.setValue(LocalDate.parse("01.01.2016", DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+
+        //DateTimeFormatter.of
+        aLabCourseChoiceBox.setValue("");
+        
+        if(labNewMod){//Cancel Button
+            labNewMod = false;
+            
+            aLabNameTextField.setEditable(false);
+            aLabDescription.setEditable(false);
+            aDeadlineDatePicker.setEditable(false);
+            
+            aLabCourseChoiceBox.setDisable(true);
+            
+            aLabNewButton.setText("New");
+            aLabSaveButton.setVisible(false);
+            
+        }else{ //new Button
+            labNewMod = true;
+            
+            aLabNameTextField.setEditable(true);
+            aLabDescription.setEditable(true);
+            aDeadlineDatePicker.setEditable(true);
+            
+            aLabCourseChoiceBox.setDisable(false);
+            
+            aLabNewButton.setText("Cancel");
+            aLabSaveButton.setVisible(true);
+        }
+    }
     
     @FXML
-    public void aLabDeleteAction(){}
+    public void aLabSaveAction() throws ClassNotFoundException, SQLException{
+        if(labNewMod){//Save Button
+            labNewMod = false;
+            
+            aLabNameTextField.setEditable(false);
+            aLabDescription.setEditable(false);
+            aDeadlineDatePicker.setEditable(false);
+            
+            aLabCourseChoiceBox.setDisable(true);
+            
+            aLabNewButton.setText("New");
+            aLabSaveButton.setVisible(false);
+            aLabSaveEditButton.setVisible(true);
+            aLabDeleteButton.setVisible(true);
+            //..... Save action
+            String deadline = aDeadlineDatePicker.getValue()
+                    .format(DateTimeFormatter.ofPattern(("dd.MM.yyyy")));
+            Laba lab = new Laba();
+            lab.setName(aLabNameTextField.getText());
+            lab.setDescription(aLabDescription.getText());
+            lab.setDeadline(deadline);
+            lab.setCourse(aLabCourseChoiceBox.getValue().toString());
+            
+            VODBC.addLab(lab);
+            myInit();
+        }
+    }
     
     @FXML
-    public void aLabSaveAction(){}
-    
+    public void aLabDeleteAction() throws ClassNotFoundException, SQLException{
+        
+        VODBC.deleteLab(aLabNameTextField.getText(), aLabCourseChoiceBox.getValue().toString());
+        setLabTabDef();
+        setLabTabTextFieldTextDef();
+        myInit();
+    }
+  
     @FXML
-    public void aLabCancelAction(){}
+    public void aLabCancelAction(){
+        labEditMod = false;
+        
+        aLabNameTextField.setText(labBackup.getName());
+        aDeadlineDatePicker.setValue(
+             LocalDate.parse(
+                     labBackup.getDeadline(), 
+                     DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        aLabDescription.setText(labBackup.getDescription());
+        aLabCourseChoiceBox.setValue(labBackup.getCourse());
+        
+        aLabNameTextField.setEditable(false);
+        aDeadlineDatePicker.setEditable(false);
+        aLabCourseChoiceBox.setDisable(true);
+        aLabDescription.setEditable(false);
+
+        aLabDeleteButton.setVisible(true);
+        aLabSaveButton.setVisible(false);
+        aLabNewButton.setVisible(true);
+        aLabCancelButton.setVisible(false);
+        aLabSaveEditButton.setText("Edit");
+    }
     
     
     /**
