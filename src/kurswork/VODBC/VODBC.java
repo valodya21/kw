@@ -24,23 +24,6 @@ import oracle.jdbc.pool.*;
  */
 public class VODBC {
 
-    static Course course[] = new Course[2];
-    
-    public static void TestUserInit(){
-        
-        course[0] = new Course("Matan");
-        for(int i=0; i<8; i++){
-            course[0].addLab(new Laba("Laba "+(i), "none"));
-            course[0].labs[i].setResult("not checked yet");
-        }
-        
-        course[1] = new Course("C programing");
-        for(int i=0; i<3; i++){
-            course[1].addLab(new Laba("Labka "+(i+1), "none"));
-            course[1].labs[i].setResult("not checked yet");
-        }
-    }
-
     public static Admin aLoadAdmin() throws ClassNotFoundException,
       SQLException{
         StartSQLConection();
@@ -49,13 +32,16 @@ public class VODBC {
         
         ResultSet rset;
         
+        String rq = "select count(group_name) from users_groups";
+        System.out.println(rq);
         rset = stmt
-            .executeQuery("select count(grup) from users_grups");
+            .executeQuery(rq);
         
         if(rset.next()) admin.grups = new Grup[rset.getInt(1)];
         
+        rq = "select group_name from users_groups";
         rset = stmt
-            .executeQuery("select grup from users_grups");
+            .executeQuery(rq);
         
         for(int i = 0; rset.next();i++){
             admin.grups[i] = new Grup();
@@ -65,113 +51,83 @@ public class VODBC {
         //int dq=1;
         for(int j=0; j<admin.grups.length; j++)
         {
-        rset = stmt
-            .executeQuery("select count(login) from (select * from (select USER_LOGIN_TABLE.LOGIN, user_table.name, user_table.phone, user_table.email, user_table.grup_id from BATMAN.USER_LOGIN_TABLE left join BATMAN.USER_TABLE on BATMAN.USER_LOGIN_TABLE.id = BATMAN.USER_TABLE.user_id) where grup_id = (select id from users_grups where grup = '"+admin.grups[j].getName()+"'))");
-        
-        int res =0;
-        if(rset.next())
-            res = rset.getInt(1);
-        if(res>0){ 
-                admin.grups[j].users = new User[res];
-            
+            rq = "select count(login) from user_table where group_id = "
+                    + "(select id from users_groups where group_name = '"+admin.grups[j].getName()+"')";
+            System.out.println(rq);
             rset = stmt
-            .executeQuery("select * from (select USER_LOGIN_TABLE.LOGIN, user_table.name, user_table.phone, user_table.email, user_table.grup_id from BATMAN.USER_LOGIN_TABLE left join BATMAN.USER_TABLE on BATMAN.USER_LOGIN_TABLE.id = BATMAN.USER_TABLE.user_id) where grup_id = (select id from users_grups where grup = '"+admin.grups[j].getName()+"')");
-        
-            for(int i=0; rset.next(); i++)
-            {
-                admin.grups[j].users[i] = new User();
-                admin.grups[j].users[i].setLogin(rset.getString(1));
-                admin.grups[j].users[i].setName(rset.getString(2));
-                admin.grups[j].users[i].setPhone(rset.getString(3));
-                admin.grups[j].users[i].setEmail(rset.getString(4));
-                admin.grups[j].users[i].setGrup(rset.getString(5));
+                .executeQuery(rq);
+
+            int res =0;
+            if(rset.next())
+                res = rset.getInt(1);
+            if(res>0){ 
+                admin.grups[j].users = new User[res];
+
+                rq = "select * from user_table where group_id = "
+                        + "(select id from users_groups where group_name = '"+admin.grups[j].getName()+"')";
+                System.out.println(rq);
+            
+                rset = stmt
+                .executeQuery(rq);
+
+                for(int i=0; rset.next(); i++)
+                {
+                    admin.grups[j].users[i] = new User();
+                    admin.grups[j].users[i].setLogin(rset.getString(1));
+                    admin.grups[j].users[i].setName(rset.getString(7));
+                    admin.grups[j].users[i].setPhone(rset.getString(5));
+                    admin.grups[j].users[i].setEmail(rset.getString(6));
+                    admin.grups[j].users[i].setGrup(admin.grups[j].getName());
+                }
+                }else
+            { //admin.grups[j].users = new User[1];
             }
-            }else{ //admin.grups[j].users = new User[1];
-        }
         }
         EndSQLConection();
         return admin;
     }
 
-    public static void updateGrupName(String tmpGrupName, String newGrupName) throws ClassNotFoundException,
+    public static void updateGroupName(String tmpGroupName, String newGroupName) throws ClassNotFoundException,
       SQLException{
         StartSQLConection();
-        
-        System.out.println("select id from users_grups where grup = '"+tmpGrupName+"'");
+        String rq = "update users_groups set group_name = '"+newGroupName+"' where group_name = '"+tmpGroupName+"'";
+        System.out.println(rq);
         ResultSet rset = stmt
-            .executeQuery("select id from users_grups where grup = '"+tmpGrupName+"'");
-        
-        int id = -1;
-        if(rset.next())
-        {
-            id = rset.getInt(1);
-        }
-        
-        System.out.println("update users_grups set grup = '"+newGrupName+"' where id = '"+id+"'");
-        rset = stmt
-            .executeQuery("update USERS_GRUPS set GRUP = '"+newGrupName+"' where ID = '"+id+"'");
+            .executeQuery(rq);
         EndSQLConection();
     }
 
-    public static void addGrup(String text) throws ClassNotFoundException,
+    public static void addGroup(String groupName) throws ClassNotFoundException,
       SQLException{
         StartSQLConection();
-        //;
-        System.out.println("insert into users_grups values ('"+text+"', (SELECT MAX(id) FROM users_grups)+1)");
+        String rq = "insert into users_groups values ('"+groupName+"', (SELECT MAX(id) FROM users_groups)+1)";
+        System.out.println(rq);
         ResultSet rset = stmt
-            .executeQuery("insert into users_grups values ('"+text+"', (SELECT MAX(id) FROM users_grups)+1)");
+            .executeQuery(rq);
         EndSQLConection();
     }
 
-    public static void deleteGrup(String text) throws ClassNotFoundException,
+    public static void deleteGroup(String text) throws ClassNotFoundException,
       SQLException{
         StartSQLConection();
-        //;
-        System.out.println("delete from user_lab where user_lab.user_id in(select user_id from user_table where grup_id = (select id from users_grups where grup = '"+text+"'))");
+        String rq = "delete from users_groups where users_groups.group_name = '"+text+"'";
+        System.out.println(rq);
         ResultSet rset = stmt
-            .executeQuery("delete from user_lab where user_lab.user_id in(select user_id from user_table where grup_id = (select id from users_grups where grup = '"+text+"'))");
-        
-        System.out.println("delete from user_login_table where user_login_table.id in(select user_id from user_table where grup_id = (select id from users_grups where grup = '"+text+"'))");
-        rset = stmt
-            .executeQuery("delete from user_login_table where user_login_table.id in(select user_id from user_table where grup_id = (select id from users_grups where grup = '"+text+"'))");
-        
-        System.out.println("delete from user_table where user_table.grup_id = (select id from users_grups where grup = '"+text+"')");
-        rset = stmt
-            .executeQuery("delete from user_table where user_table.grup_id = (select id from users_grups where grup = '"+text+"')");
-
-        System.out.println("delete from users_grups where users_grups.grup = '"+text+"'");
-        rset = stmt
-            .executeQuery("delete from users_grups where users_grups.grup = '"+text+"'");
-        
+            .executeQuery(rq);
         EndSQLConection();
-        
     }
 
     public static void updateUserInfo(User newUser)  throws ClassNotFoundException,
       SQLException{
         StartSQLConection();
-        ResultSet rset;
-        
-        rset = stmt
-            .executeQuery("select ID, password from user_login_table where login = '"+newUser.tmp+"'");
-        
-        int id = -1;
-        String pass = null;
-        if(rset.next())
-        {
-            id = rset.getInt(1);
-            pass = rset.getString(2);
-            System.out.println(id);
-        }
-        
-        System.out.println("update user_login_table set login = '"+newUser.getLogin()+"', permision = '"+newUser.getPermissionLevel()+"' where id = '"+id+"'");
-        rset = stmt
-            .executeQuery("update user_login_table set login = '"+newUser.getLogin()+"', permision = '"+newUser.getPermissionLevel()+"' where id = '"+id+"'");
-  
-        System.out.println("update user_table set grup_id = (select id from users_grups where grup = '"+newUser.getGrup()+"'), phone = '"+newUser.getPhone()+"', email = '"+newUser.getEmail()+"', name = '"+newUser.getName()+"' where user_id = (select id from user_login_table where login = '"+newUser.getLogin()+"')");
-        rset = stmt
-            .executeQuery("update user_table set grup_id = (select id from users_grups where grup = '"+newUser.getGrup()+"'), phone = '"+newUser.getPhone()+"', email = '"+newUser.getEmail()+"', name = '"+newUser.getName()+"' where user_id = (select id from user_login_table where login = '"+newUser.getLogin()+"')");
-
+        String rq = "update user_table set login = '"+newUser.getLogin()
+                +"', group_id = (select id from users_groups where group_name = '"+newUser.getGrup()
+                +"'), phone = '"+newUser.getPhone()
+                +"', email = '"+newUser.getEmail()
+                +"', name = '"+newUser.getName()+"' where login = '"+newUser.tmp+"'";
+        System.out.println(rq);
+        ResultSet rset = stmt
+            .executeQuery(rq);
         EndSQLConection();
     }
 
@@ -180,14 +136,18 @@ public class VODBC {
         StartSQLConection();
         ResultSet rset;
         
-        System.out.println("insert into user_login_table values('"+newUser.getLogin()+"', '"+MD5.getString(newUser.getPassword())+"', '"+newUser.getPermissionLevel()+"', (SELECT MAX(id) FROM user_login_table)+1)");
-        rset = stmt
-            .executeQuery("insert into user_login_table values('"+newUser.getLogin()+"', '"+MD5.getString(newUser.getPassword())+"', '"+newUser.getPermissionLevel()+"', (SELECT MAX(id) FROM user_login_table)+1)");
+        String rq = "insert into user_table values('"+newUser.getLogin()+
+                "', '"+MD5.getString(newUser.getPassword())+
+                "', ((SELECT MAX(id) FROM user_table)+1), "
+                + "(select id from users_groups where group_name = '"
+                +newUser.getGrup()+"'), '"+newUser.getPhone()+"', '"+
+                newUser.getEmail()+"', '"+newUser.getName()+"', '"+
+                newUser.getPermissionLevel()+"')";
         
-        System.out.println("insert into user_table values((select id from users_grups where grup = '"+newUser.getGrup()+"'), '"+newUser.getPhone()+"', '"+newUser.getEmail()+"', '"+newUser.getName()+"' ,(select id from user_login_table where login = '"+newUser.getLogin()+"'))");
+        System.out.println(rq);
         rset = stmt
-            .executeQuery("insert into user_table values((select id from users_grups where grup = '"+newUser.getGrup()+"'), '"+newUser.getPhone()+"', '"+newUser.getEmail()+"', '"+newUser.getName()+"' ,(select id from user_login_table where login = '"+newUser.getLogin()+"'))");
-
+            .executeQuery(rq);
+        
         EndSQLConection();
     }
 
@@ -195,44 +155,72 @@ public class VODBC {
       SQLException{
         StartSQLConection();
         ResultSet rset;
-        
-        System.out.println("select id from user_login_table where login = '"+login+"'");
+        String rq = "delete from user_table where login = '"+login+"'";
+        System.out.println(rq);
         rset = stmt
-            .executeQuery("select id from user_login_table where login = '"+login+"'");
-        int id = -1;
-        if(rset.next()){
-            id = rset.getInt(1);
-        }
-        
-        System.out.println("delete from user_lab where user_lab.user_id = '"+id+"'");
-        rset = stmt
-            .executeQuery("delete from user_lab where user_lab.user_id = '"+id+"'");
-        
-        System.out.println("delete from user_table where user_table.user_id = '"+id+"'");
-        rset = stmt
-            .executeQuery("delete from user_table where user_table.user_id = '"+id+"'");
-        
-        System.out.println("delete from user_login_table where user_login_table.id = '"+id+"'");
-        rset = stmt
-            .executeQuery("delete from user_login_table where user_login_table.id = '"+id+"'");
-        
+            .executeQuery(rq);
         EndSQLConection();
     }
 
-    public static void updateCource(Course cou) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public static void updateCource(Course cou)   throws ClassNotFoundException,
+      SQLException{
+        StartSQLConection();
+        String rq = "update course set course_name = '"+cou.getName()+"' where course_name = '"+cou.tmp+"'";
+        System.out.println(rq);
+        ResultSet rset = stmt
+            .executeQuery(rq);
+        EndSQLConection();
     }
 
-    public static void addCourse(Course cou) {
-       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public static void addCourse(Course cou) throws ClassNotFoundException,
+      SQLException{
+        StartSQLConection();
+        
+        String MaxId = "(SELECT MAX(id) FROM course)";
+        System.out.println(MaxId);
+        ResultSet rset = stmt
+            .executeQuery(MaxId);
+        
+        if(rset.next())
+            if(rset.getString(1)== null)
+                MaxId = "1";
+            
+        String rq = "insert into course values('"+cou.getName()+"', "+MaxId+"+1)";
+        System.out.println(rq);
+        rset = stmt
+            .executeQuery(rq);
+        EndSQLConection();
     }
 
-    public static void deleteCourse(String text) {
-      //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public static void deleteCourse(String courseName)   throws ClassNotFoundException,
+      SQLException{
+        StartSQLConection();
+        ResultSet rset;
+        String rq = "delete from course where course_name = '"+courseName+"'";
+        System.out.println(rq);
+        rset = stmt
+            .executeQuery(rq);
+        EndSQLConection();
+    }
+
+    public static void setPass(String text, String pass)  throws ClassNotFoundException,
+      SQLException{
+        StartSQLConection();
+//        ResultSet rset;
+//        
+//        System.out.println();
+//        rset = stmt
+//            .executeQuery("insert into course values('"+cou.getName()+"', (SELECT MAX(id) FROM course)+1)");
+//        
+//            //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        //"update user_login_table set password = '"+
+//     
+        
+        EndSQLConection();
     }
     
     public VODBC(){
-        this.TestUserInit();
+        
     }
     
     public static void testSQLConection() throws ClassNotFoundException,
@@ -276,6 +264,23 @@ public class VODBC {
         stmt = conn.createStatement();
     }
     
+    private static void StartSQLConection__() throws ClassNotFoundException,
+      SQLException{
+        ds = new OracleDataSource();
+        ds.setDriverType("thin");
+        ds.setServerName("localhost");
+        ds.setPortNumber(1521);
+        ds.setDatabaseName("neworcl"); // sid
+        ds.setUser("BATMAN");
+        ds.setPassword("ROBIN");
+        
+        conn = ds.getConnection();
+        conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+        conn.setAutoCommit(false);
+        //Savepoint save1 = conn.setSavepoint();
+        stmt = conn.createStatement();
+    }
+    
     private static void EndSQLConection() throws ClassNotFoundException,
       SQLException{
         stmt.close();
@@ -287,11 +292,17 @@ public class VODBC {
         
         StartSQLConection();
         
+        String rq = "select PASSWORD from USER_TABLE where login = '"+user.getLogin()+"'";
+        System.out.println(rq);
         ResultSet rset = stmt
-            .executeQuery("select PASSWORD from USER_LOGIN_TABLE where login = '"+user.getLogin()+"'");
+            .executeQuery(rq);
         if(rset.next()){
-            if(MD5.getString(user.getPassword()).equals(rset.getString(1)))
-            return true;
+            String pass = rset.getString(1);
+            String testPass  = MD5.getString(user.getPassword());
+            if(testPass.equals(pass)){
+                EndSQLConection();
+                return true;
+            }
         }
         EndSQLConection();
         return false;
@@ -303,9 +314,12 @@ public class VODBC {
         String answer = "ERROR";
         if(this.userExistValid(user))
         {
-            StartSQLConection();
+            StartSQLConection__();
+            
+            String rq = "select group_name from users_groups where id = (select group_id from user_table where login = '"+user.getLogin()+"')";
+            System.out.println(rq);
             ResultSet rset = stmt
-                .executeQuery("select PERMISION from USER_LOGIN_TABLE where login = '"+user.getLogin()+"'");
+                .executeQuery(rq);
             if(rset.next())
                 answer = rset.getString(1);
             EndSQLConection();
@@ -316,9 +330,11 @@ public class VODBC {
     public static boolean updatePhoneNumber(User user)throws ClassNotFoundException,
       SQLException{ 
         StartSQLConection();
+        System.out.println();
+        String rq = "Update user_table set phone = '"+user.tmp+"' where login = '"+user.getLogin()+"'";
+        System.out.println(rq);
         ResultSet rset = stmt
-            .executeQuery("Update user_table set phone = '"+user.tmp+"' where USER_ID = (select distinct ID from user_login_table where login = '"+user.getLogin()+"')");
-        
+            .executeQuery(rq);
         EndSQLConection();
         return true;
     }
@@ -326,10 +342,10 @@ public class VODBC {
     public static boolean updateEmail(User user)throws ClassNotFoundException,
       SQLException{
         StartSQLConection();
-        System.out.println("Update user_table set email = '"+user.tmp+"' where user_id = (select distinct ID from user_login_table where login = '"+user.getLogin()+"')");
+        String rq = "Update user_table set email = '"+user.tmp+"' where login = '"+user.getLogin()+"'";
+        System.out.println(rq);
         ResultSet rset = stmt
-            .executeQuery("Update user_table set email = '"+user.tmp+"' where user_id = (select distinct ID from user_login_table where login = '"+user.getLogin()+"')");
-        
+            .executeQuery(rq);
         EndSQLConection();
         return true;
     }
@@ -338,39 +354,32 @@ public class VODBC {
       SQLException{
         StartSQLConection();
         
-        ResultSet rset2;
         ResultSet rset = stmt
               .executeQuery("select LABA_NAME,deadline,description from LABS where COURSE_ID = (select distinct ID from COURSE where COURSE_NAME ='"+crs.getName()+"')");
         
         for(int i=0; rset.next(); i++){
-             //rset2.next();
-             crs.addLab(new Laba(rset.getString(1),rset.getString(2)));//rset2.getString(1)));
-             //crs.labs[i].setResult(rset.getString(3));
+             crs.addLab(new Laba(rset.getString(1),rset.getString(2)));
              crs.labs[i].setDescription(rset.getString(3));
          }
         rset.close();
-       
-        rset = stmt
-              .executeQuery("select POINT, LAB_ID as lab from user_lab where user_id = (select ID from user_login_table where LOGIN = '"+tmpUserName+"')  AND LAB_ID in (select LAB_ID from LABS where COURSE_ID = (select distinct ID from COURSE where COURSE_NAME = '"+crs.getName()+"'))");
-        for(int i=0; rset.next(); i++){
-            crs.labs[i].setResult(rset.getString(1));
-        }
-      
+//        rset = stmt
+//              .executeQuery("select POINT, LAB_ID as lab from user_lab where user_id = (select ID from user_table where LOGIN = '"+tmpUserName+"')  AND LAB_ID in (select LAB_ID from LABS where COURSE_ID = (select distinct ID from COURSE where COURSE_NAME = '"+crs.getName()+"'))");
+//        for(int i=0; rset.next(); i++){
+//            crs.labs[i].setResult(rset.getString(1));
+//        }
         EndSQLConection();
-        
         return crs;
     }
     
-    public static Course[] getCourse(String grup)throws ClassNotFoundException,
+    public static Course[] getCourse(String group)throws ClassNotFoundException,
       SQLException{
         StartSQLConection();
         Course crs[] = null;
         
-        String rq = "select course_name from course where id in (select course_id from course_grup where grup_id = (select id from users_grups where grup ='"+grup+"'))";
+        String rq = "select course_name from course where id in (select course_id from course_group where group_id = (select id from users_groups where group_name ='"+group+"'))";
         System.out.println(rq);
         ResultSet rset = stmt
               .executeQuery(rq);
-//              .executeQuery("select distinct COURSE.COURSE_NAME from COURSE where GRUP_ID = (select ID from USERS_GRUPS where GRUP = '"+grup+"')");
         
         for(int i=0; rset.next(); i++){
             if(crs == null){
@@ -387,10 +396,8 @@ public class VODBC {
             crs[i]=getCourseLabs(crs[i]);
         }
         EndSQLConection();
-        
         return crs;
     }
-    
     
     public static Course[] getAllCourse()throws ClassNotFoundException,
       SQLException{
@@ -404,7 +411,8 @@ public class VODBC {
         if(rset.next()){
             crs = new Course[1];
             crs[0] = new Course(rset.getString(1));
-            String rq2 = "select GRUP from USERS_GRUPS where ID in(select GRUP_ID from COURSE_GRUP where COURSE_ID = (select ID from COURSE where COURSE_NAME = '"+crs[0].getName()+"'))";
+            String rq2 = "select GROUP from USERS_GROUPS where ID in"
+                    + "(select GROUP_ID from COURSE_GROUP where COURSE_ID = (select ID from COURSE where COURSE_NAME = '"+crs[0].getName()+"'))";
             System.out.println(rq2);
             ResultSet rset2 = stmt
             .executeQuery(rq2);
@@ -455,46 +463,19 @@ public class VODBC {
         
         StartSQLConection();
         
-        String rq = "select PERMISION from USER_LOGIN_TABLE where login = '"+date.user.getLogin()+"'";
-        
+        String rq = "select * from user_table left join users_groups on user_table.group_id = users_groups.id";             
         System.out.println(rq);
         ResultSet rset = stmt
             .executeQuery(rq);
         if(rset.next())
-            date.user.setPermissionLevel(rset.getString(1));
-        else date.user.setPermissionLevel("");
-        
-        rq = "select GRUP from USERS_GRUPS where id = (select GRUP_ID from USER_TABLE where USER_ID = (select distinct ID from user_login_table where login = '"+date.user.getLogin()+"'))";
-        System.out.println(rq);
-        rset = stmt
-            .executeQuery(rq);
-        if(rset.next())
-            date.user.setGrup(rset.getString(1));
-        else date.user.setGrup("");
-        
-        rq = "select NAME from USER_TABLE where USER_ID = (select distinct ID from user_login_table where login = '"+date.user.getLogin()+"')";
-        System.out.println(rq);
-        rset = stmt
-            .executeQuery(rq);
-        if(rset.next())
-            date.user.setName(rset.getString(1));
-        else date.user.setName("");
-        
-        rq = "select PHONE from USER_TABLE where USER_ID = (select distinct ID from user_login_table where login = '"+date.user.getLogin()+"')";
-        System.out.println(rq);
-        rset = stmt
-            .executeQuery(rq);
-        if(rset.next())
-            date.user.setPhone(rset.getString(1));
-        else date.user.setPhone("");
-        
-        rq = "select EMAIL from USER_TABLE where USER_ID = (select distinct ID from user_login_table where login = '"+date.user.getLogin()+"')";
-        System.out.println(rq);
-        rset = stmt
-            .executeQuery(rq);
-        if(rset.next())
-            date.user.setEmail(rset.getString(1));
-        else date.user.setEmail("");
+        {
+            date.user.setLogin(rset.getString(1));
+            date.user.setPhone(rset.getString(5));
+            date.user.setEmail(rset.getString(6));
+            date.user.setName(rset.getString(7));
+            date.user.setPermissionLevel(rset.getString(8));
+            date.user.setGrup(rset.getString(9));
+        }
         
         EndSQLConection();
         tmpUserName = date.user.getLogin();
@@ -532,25 +513,26 @@ public class VODBC {
             Statement stmt2 = conn.createStatement();
             ResultSet rset2 = stmt2.executeQuery(rq2);
             while(rset2.next()){
-            Laba lab = new Laba();
-                lab.setDeadline(rset2.getString(2));
-                lab.setName(rset2.getString(1));
-                lab.setDescription(rset2.getString(3));
+                Laba lab = null;
+                if(rset2.getString(1) != null){
+                    lab = new Laba();
+                    lab.setDeadline(rset2.getString(2));
+                    lab.setName(rset2.getString(1));
+                    lab.setDescription(rset2.getString(3));
+                }
                 crs[i].addLab(lab);
             }
             
-            String rq3 = "select GRUP from users_grups where id in (select grup_id from course_grup where course_id = (select id from course where course_name = '"+crs[i].getName()+"'))"; 
+            String rq3 = "select GROUP_name from users_groups where id in (select group_id from course_group where course_id = (select id from course where course_name = '"+crs[i].getName()+"'))"; 
             Statement stmt3 = conn.createStatement();
-            ResultSet rset3 = stmt2.executeQuery(rq3);
+            ResultSet rset3 = stmt3.executeQuery(rq3);
             while(rset3.next()){
-            Grup grup = new Grup();
+                Grup grup = new Grup();
                 grup.setName(rset3.getString(1));
                 crs[i].addGrup(grup);
             }
         }
-        
         EndSQLConection();
-        
         return crs;
     }
 }

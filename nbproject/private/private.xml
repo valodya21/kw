@@ -5,14 +5,12 @@
         <group>
             <file>file:/C:/tb/KursWork/src/kurswork/loginView/LoginController.java</file>
             <file>file:/C:/tb/KursWork/src/kurswork/adminView/AdminViewController.java</file>
-            <file>file:/C:/tb/KursWork/src/kurswork/Laba.java</file>
             <file>file:/C:/tb/KursWork/src/kurswork/userView/UserViewController.java</file>
-            <file>file:/C:/tb/KursWork/src/kurswork/MyProg.java</file>
+            <file>file:/C:/tb/KursWork/src/kurswork/Laba.java</file>
             <file>file:/C:/tb/KursWork/src/kurswork/Admin.java</file>
             <file>file:/C:/tb/KursWork/src/kurswork/VODBC/VODBC.java</file>
-            <file>file:/C:/tb/KursWork/src/kurswork/MainTransferDate.java</file>
+            <file>file:/C:/tb/KursWork/src/kurswork/VODBC/LODBC.java</file>
             <file>file:/C:/tb/KursWork/src/kurswork/User.java</file>
-            <file>file:/C:/tb/KursWork/nbproject/build-impl.xml</file>
             <file>file:/C:/tb/KursWork/src/kurswork/Course.java</file>
         </group>
     </open-files>

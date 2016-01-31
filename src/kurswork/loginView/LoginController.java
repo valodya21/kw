@@ -59,30 +59,6 @@ public class LoginController implements Initializable {
             if(logc.userExistValid(date.user)){
                 date.user.setPermissionLevel(logc.getUserPermision(date.user));
                 
-                if(date.user.getPermissionLevel().equals("user")){
-                    Stage s = (Stage) msgLabel.getScene().getWindow();
-                    
-                    FXMLLoader loader = new FXMLLoader();
-                    loader.setLocation(getClass().getResource("/kurswork/userView/UserView.fxml"));
-                    loader.load();
-                    
-                    UserViewController uvc = loader.getController();
-                    uvc.date = date;
-                    uvc.myInit();
-                    
-                    Parent parent = loader.getRoot();
-                    
-                    Stage stage = new Stage();
-                    
-                    stage.setScene(new Scene(parent));
-                    stage.setTitle("Labs");
-                    stage.setMinWidth(600);
-                    stage.setMinHeight(400);
-                    stage.show();
-                    
-                    s.close();
-                }
-                
                 if(date.user.getPermissionLevel().equals("admin"))
                 {
                     Stage s = (Stage) msgLabel.getScene().getWindow();
@@ -105,8 +81,29 @@ public class LoginController implements Initializable {
                     stage.show();
                     
                     s.close();
+                } else {
+                    Stage s = (Stage) msgLabel.getScene().getWindow();
+                    
+                    FXMLLoader loader = new FXMLLoader();
+                    loader.setLocation(getClass().getResource("/kurswork/userView/UserView.fxml"));
+                    loader.load();
+                    
+                    UserViewController uvc = loader.getController();
+                    uvc.date = date;
+                    uvc.myInit();
+                    
+                    Parent parent = loader.getRoot();
+                    
+                    Stage stage = new Stage();
+                    
+                    stage.setScene(new Scene(parent));
+                    stage.setTitle("Labs");
+                    stage.setMinWidth(600);
+                    stage.setMinHeight(400);
+                    stage.show();
+                    
+                    s.close();
                 }
-                
                 msgLabel.setText("...!"+date.user.getPermissionLevel()+"_"); 
             }else
                 msgLabel.setText("Username or password invalid!"); 
